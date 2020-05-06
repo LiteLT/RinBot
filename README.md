@@ -1,0 +1,2 @@
+# Rin
+A Discord bot.
