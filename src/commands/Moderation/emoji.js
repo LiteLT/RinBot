@@ -29,8 +29,6 @@ module.exports = class extends Command {
                 emoji.id
             ].join(":")}>`;
 
-            console.log;
-
             if (emojiText === query) {
                 return emoji;
             }
