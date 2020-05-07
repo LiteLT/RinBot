@@ -9,6 +9,7 @@ module.exports = class extends Command {
             usage: "[term|random] (term)",
             description: "Search the Urban Dictionary.",
             requiredArgs: 1,
+            nsfw: true,
             aliases: ["urban", "ud"],
             flags: [{
                 name: "noembed",
