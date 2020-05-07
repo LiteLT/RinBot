@@ -241,7 +241,7 @@ class Command {
      * option may be ignored when set to `true` if the bot lacks permission to `Embed Links`.
      * @returns {Promise<Message>} The newly created message.
      */
-    async buildHelp(message, subcommand, options = { time: 30000, embed: true }) {
+    async buildHelp(message, subcommand, options = { time: 300000, embed: true }) {
         let content = null;
         let sendType = options.embed && (!message.channel.guild ||
             message.channel.permissionsOf(this.client.user.id).has("embedLinks")) ? "embed" : "plain";
