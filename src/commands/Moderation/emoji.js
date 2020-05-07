@@ -5,13 +5,11 @@ const { Util, Command } = require("../../index.js");
 module.exports = class extends Command {
     constructor(...args) {
         super(...args, {
-            usage: "<create|delete> (emoji)",
+            usage: "<info|create|delete|rename> (emoji)",
             description: "Manages guild emojis.",
             requiredArgs: 1,
             guildOnly: true,
-            aliases: ["emote"],
-            memberPermissions: ["manageEmojis"],
-            clientPermissions: ["manageEmojis"]
+            aliases: ["emote"]
         });
     }
 
