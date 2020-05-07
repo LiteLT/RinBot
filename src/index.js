@@ -7,7 +7,6 @@ module.exports = {
     Schedule: require("./structures/Schedule.js"),
     CommandError: require("./utils/CommandError.js"),
     Collection: require("./structures/Collection.js"),
-    KitsuMedia: require("./structures/KitsuMedia.js"),
     Command: require("./structures/Command/Command.js"),
     HypixelLeveling: require("./utils/HypixelLeveling.js"),
     EventListener: require("./structures/EventListener.js"),
