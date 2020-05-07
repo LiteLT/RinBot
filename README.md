@@ -55,7 +55,7 @@ Keep in mind that I will not help you during the process. Any issues you run int
 2. Clone the repository.
 3. Run `npm install` in the directory where the bot project is. If you receive any errors during installation, I won't be any assistance to you.
 4. Create a new application on the [Discord Developer Portal](https://discord.com/developers/applications).
-    - Click, "New Application" and give your applciation a name.
+    - Click, "New Application" and give your application a name.
     - Copy the "Client ID", then navigate to `src/utils/Constants.js` and replace `BOT_ID` with your bot's ID.
     - Look at the side bar and press, "Bot" and build a bot. The name you gave your application will be the bot's name, but it can be changed.
     - Press, "Copy" on the token. Create a `.env` file and type `DISCORD_TOKEN=YOUR_TOKEN_HERE`, with `YOUR_TOKEN_HERE`, obviously being your bot token. There should be no spaces in between.
