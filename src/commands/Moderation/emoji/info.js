@@ -7,7 +7,7 @@ module.exports = class extends Subcommand {
         super(...args, {
             usage: "<emoji>",
             description: "Displays information on an emoji.",
-            fullDescription: "To get the URL to an emoji, use the `--icon` flag. The `--noembed` flag is supported.",
+            fullDescription: "To get the URL of an emoji, use the `--icon` flag. The `--noembed` flag is supported.",
             requiredArgs: 1
         });
     }
