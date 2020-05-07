@@ -19,7 +19,7 @@ You cannot invite Rin. If you'd like to have Rin on your server, please contact 
 
 **Why is Rin private?**
 
-Rin's features are based around the guilds she is in. Some commands would or would not work as expected in other servers. I also don't feel like maintaining another pubilc bot at the time. If you'd like to see one of my public bots (old but still around), check out [Riko](https://top.gg/bot/553771373944635402).
+Rin's features are based around the guilds she is in. Some commands would or would not work as expected in other servers. I also don't feel like maintaining another public bot at the time. If you'd like to see one of my public bots (old but still around), check out [Riko](https://top.gg/bot/553771373944635402).
 
 If you really want to have Rin in your server, you can always try self-hosting the bot. It's not user-friendly and has little documentation at the moment, so I advise you avoid doing so.
 
