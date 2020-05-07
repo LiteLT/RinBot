@@ -2,7 +2,6 @@ const SLOTHPIXEL_URL = "https://api.slothpixel.me/api";
 const DISCORD_CDN_URL = "https://cdn.discordapp.com";
 const THE_COLOR_API_URL = "http://thecolorapi.com";
 const HYPIXEL_API_URL = "https://api.hypixel.net";
-const KITSU_API_URL = "https://kitsu.io";
 const MYANIMELIST_URL = "https://myanimelist.net";
 const VISAGE_URL = "https://visage.surgeplay.com";
 const PLANCKE_URL = "https://plancke.io/hypixel";
@@ -26,10 +25,6 @@ module.exports = {
     HYPIXEL_API_GUILD_GUILD: (key, guild) => `${HYPIXEL_API_URL}/guild?name=${guild}&key=${key}`,
     HYPIXEL_API_PLAYER_UUID: (key, uuid) => `${HYPIXEL_API_URL}/player?uuid=${uuid}&key=${key}`,
     HYPIXEL_API_PLAYER_USERNAME: (key, name) => `${HYPIXEL_API_URL}/player?name=${name}&key=${key}`,
-
-    KITSU_ANIME: (mediaID) => `${KITSU_API_URL}/anime/${mediaID}`,
-    KITSU_API_MEDIA: (text, limit, fields, ageRating) => `${KITSU_API_URL}/api/edge/anime?filter[text]=${text}` +
-    `&filter[ageRating]=${ageRating}&fields[anime]=${fields}&page[limit]=${limit}`,
 
     MINECRAFT_UUID_NAMEHISTORY: (uuid) => `${MOJANG_API_URL}/user/profiles/${uuid}/names`,
 
