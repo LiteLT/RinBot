@@ -6,14 +6,6 @@
  */
 class Collection extends Map {
     /**
-     * Initializes the collection.
-     * @param {...any} args Values to pass to the extended Map class.
-     */
-    constructor(...args) {
-        super(...args);
-    }
-  
-    /**
      * Run a filter over all items returning values passing the function.
      * @param {Function} fn The function to run over each item. The function receives the item, index, and its `this`
      * value.
