@@ -4,7 +4,7 @@
   "description": "A private Discord bot.",
   "main": "app.js",
   "scripts": {
-    "start": "node .",
+    "start": "node --input-type=module --redirect-warnings=warnings.txt --report-uncaught-exception --title=RinBot --trace-deprecation --trace-warnings .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kinolite",
