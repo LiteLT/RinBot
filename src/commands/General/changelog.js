@@ -19,17 +19,6 @@ module.exports = class extends Command {
         // Note: only 5 results!!!
         let history = [
             {
-                date: "April 30th, 2020 — May 1st, 2020",
-                value: [
-                    "Created the `prefix` command.",
-                    "Created the `view` subcommand of `prefix`.",
-                    "Created the `add` subcommand of `prefix`.",
-                    "Created the `remove` subcommand of `prefix`.",
-                    "Created the `clear` subcommand of `prefix`.",
-                    "Created the `reset` subcommand of `prefix`."
-                ].map((str) => `- ${str}`).join("\n")
-            },
-            {
                 date: "May 2th, 2020",
                 value: [
                     "Created the `changelog` command.",
@@ -53,6 +42,19 @@ module.exports = class extends Command {
                 value: [
                     "Created the `remove` subcommand of `modrole`.",
                     "Created the `clear` subcommand of `modrole`."
+                ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "May 7th, 2020",
+                value: [
+                    "Removes the `Kitsu` command and its subcommands.",
+                    "Created public GitHub repository (<https://github.com/Kinolite/RinBot>)."
+                ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "May 8th, 2020",
+                value: [
+                    "Added category descriptions in the help manual (`help <category>`)."
                 ].map((str) => `- ${str}`).join("\n")
             }
         ];
