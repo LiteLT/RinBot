@@ -15,7 +15,7 @@ module.exports = class extends Subcommand {
   
     async run(message, [arg]) {
         let search = arg.toLowerCase();
-        let categories = Util.arrayUnique(this.client.commands.map((command) => command.category));
+        let categories = Util.arrayUnique(this.client.commands.map((command) => command.category.name));
         let category = categories.find((category) => category.toLowerCase() === search);
       
         if (category) {

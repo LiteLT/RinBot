@@ -39,7 +39,7 @@ module.exports = class extends Command {
             return this._reloadCommand(message, command);
         }
       
-        let categories = Util.arrayUnique(this.client.commands.map((command) => command.category));
+        let categories = Util.arrayUnique(this.client.commands.map((command) => command.category.name));
         let category = categories.find((category) => category.toLowerCase() === search);
       
         if (category) {
@@ -54,7 +54,7 @@ module.exports = class extends Command {
       
         for (const [, command] of this.client.commands) {
             try {
-                delete require.cache[require.resolve(`../${command.category}/${command.name}.js`)];
+                delete require.cache[require.resolve(`../${command.category.name}/${command.name}.js`)];
             } catch {
                 failed.push(command.name);
             }
@@ -73,10 +73,11 @@ module.exports = class extends Command {
     }
   
     async _reloadCategory(message, categoryName) {
-        let commands = this.client.commands.filter((command) => command.category === categoryName);
+        let commands = [...this.client.commands.filter((command) => command.category.name === categoryName).values()];
+        let category = commands[0].category;
       
-        for (const [, command] of commands) {
-            delete require.cache[require.resolve(`../${command.category}/${command.name}.js`)];
+        for (const command of commands) {
+            delete require.cache[require.resolve(`../${category.name}/${command.name}.js`)];
             this.client.commands.delete(command.name);
           
             for (const alias of command.aliases) {
@@ -86,8 +87,7 @@ module.exports = class extends Command {
       
         const commandFiles = await fs.readdir(`src/commands/${categoryName}/`);
         for (const commandFile of commandFiles) {
-            let command = new (require(`../${categoryName}/${commandFile}`))(this
-                .client, commandFile, categoryName);
+            let command = new (require(`../${categoryName}/${commandFile}`))(this.client, commandFile, category);
 
             this.client.commands.set(command.name, command);
 
@@ -103,7 +103,7 @@ module.exports = class extends Command {
     async _reloadCommand(message, command) {
         let hasSubcommands = command.subcommands.size;
               
-        delete require.cache[require.resolve(`../${command.category}/${command.name}.js`)];
+        delete require.cache[require.resolve(`../${command.category.name}/${command.name}.js`)];
         this.client.commands.delete(command.name);
       
         for (const alias of command.aliases) {
@@ -111,13 +111,13 @@ module.exports = class extends Command {
         }
       
         for (const [subcommand] of command.subcommands) {
-            let pathway = `../${command.category}/${command.name}/${subcommand}.js`;
+            let pathway = `../${command.category.name}/${command.name}/${subcommand}.js`;
           
             delete require.cache[require.resolve(pathway)];
         }
       
         command.subcommands.clear();
-        command = new (require(`../${command.category}/${command
+        command = new (require(`../${command.category.name}/${command
             .name}.js`))(this.client, `${command.name}.js`, command.category);
       
         this.client.commands.set(command.name, command);
@@ -127,10 +127,10 @@ module.exports = class extends Command {
         }
       
         if (hasSubcommands > 0) {
-            let subcommands = await fs.readdir(`src/commands/${command.category}/${command.name}/`);
+            let subcommands = await fs.readdir(`src/commands/${command.category.name}/${command.name}/`);
 
             for (const subcommandFile of subcommands) {
-                let subcommand = new (require(`../${command.category}/${command
+                let subcommand = new (require(`../${command.category.name}/${command
                     .name}/${subcommandFile}`))(this.client, command, subcommandFile);
 
                 command.subcommands.set(subcommand.name, subcommand);
@@ -142,7 +142,7 @@ module.exports = class extends Command {
     }
   
     _reloadSubcommand(message, command, subcommand) {
-        let pathway = `../${command.category}/${command.name}/${subcommand.name}.js`;
+        let pathway = `../${command.category.name}/${command.name}/${subcommand.name}.js`;
       
         delete require.cache[require.resolve(pathway)];
         command.subcommands.delete(subcommand.name);
