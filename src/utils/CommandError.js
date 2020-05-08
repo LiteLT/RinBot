@@ -9,10 +9,9 @@
 class CommandError {
     /**
      * Sends a message saying something was not found.
-     * @static
      * @param {Message} message The message to reference.
      * @param {String} type The thing that was not found. 
-     * @param {String} [search] The input.
+     * @param {String} [search=""] The input.
      * @returns {Promise<Message>} The created message.
      */
     static ERR_NOT_FOUND(message, type, search = "") {
@@ -61,12 +60,12 @@ class CommandError {
 
     /**
      * Sends a message notifying the user that an input was not in range.
-     * @param {*} message The message to reference.
-     * @param {*} label The name to call it by.
-     * @param {*} type The type of the label.
-     * @param {*} start The starting range.
-     * @param {*} end The ending range.
-     * @param {*} [suffix=""] Any suffixes to add to the end of the input.
+     * @param {Message} message The message to reference.
+     * @param {String} label The name to call it by.
+     * @param {String} type The type of the label.
+     * @param {String|Number} start The starting range.
+     * @param {String|Number} end The ending range.
+     * @param {String} [suffix=""] Any suffixes to add to the end of the input.
      * @returns {Promise<Message>} The new message.
      */
     static ERR_INVALID_RANGE(message, label, type, start, end, suffix = "") {
