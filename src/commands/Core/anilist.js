@@ -18,10 +18,8 @@ module.exports = class extends Command {
                 },
                 {
                     name: "all",
-                    description: "Displays up to 10 anime with similar title names. This is " +
-                    "useful for when you don't remember the exact name of an anime. Select an " +
-                    "anime by picking a number between one and the number of anime shown " +
-                    "(1 - 10). **Not every subcommand supports this flag.**"
+                    description: "Displays up to 10 results based on the title/name. Select an item from the list by " +
+                    "picking a number between one and the number of results shown."
                 }
             ]
         });
