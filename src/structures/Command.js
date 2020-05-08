@@ -12,99 +12,156 @@ const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
  * @typedef {import("eris").Role} Role
  * @typedef {import("eris").Member} Member
  * @typedef {import("eris").Message} Message
- * @typedef {import("../../Client.js")} Client
+ * @typedef {import("../Client.js")} Client
  * @typedef {import("./Subcommand.js")} Subcommand
+ * @typedef {import("./CommandCategory.js")} CommandCategory
  */
 /**
  * Represents a command.
- * @property {Client} client The client instance.
- * @property {String} name The name of the command.
- * @property {String} category The category the command is apart of.
- * @property {String} usage The syntax on how to use the command.
- * @property {String} description The command short description.
- * @property {String} fullDescription The full command description.
- * @property {Number} cooldown The number of seconds to wait before each call. A global ratelimit
- * of 1 second has been applied. 
- * @property {Number} requiredArgs The number of arguments required to pass in order to run
- * the command.
- * @property {Boolean} nsfw Whether the command is restricted to NSFW channels or not.
- * @property {Boolean} enabled Whether the command is enabled or not.
- * @property {Boolean} guildOnly Whether the command is restricted to guilds only or not.
- * @property {Boolean} protected Whether the command is protected from being disabled
- * through guild settings.
- * @property {Array<String>} aliases The aliases to refer the command to.
- * @property {Array<String>} memberPermissions A list of permissions the member is required to have.
- * @property {Array<String>} clientPermissions A list of permissions the client member is required
- * to have.
- * @property {Function} validatePermissions A function that must return true acting as a permission
- * wall. The function receives the message instance.
- * @property {Object} flags A list of flags available when running the command.
  */
 class Command {
     /**
-     * Initializes the command.
      * @param {Client} bot The client instance.
-     * @param {String} fileName The name of the file to use as the command name.
-     * @param {String} categoryName The name of the category/directory of the command.
-     * @param {Object} options Optional options to pass for its settings.
-     * @param {String} [options.usage=""] The usage/syntax on how to run the command.
-     * @param {String} [options.description="No synopsis"] The short description of the command.
-     * @param {String} [options.fullDescription=null] The full description describing the command
-     * more in depth.
-     * @param {Number} [options.cooldown=3] The ratelimit in seconds.
-     * @param {Number} [options.requiredArgs=0] The number of arguments required to be passed before
-     * running the command.
-     * @param {Boolean} [options.nsfw=false] Whether the command can only be run in NSFW channels.
-     * @param {boolean} [options.enabled=true] Whether the command is enabled or not.
-     * @param {Boolean} [options.guildOnly=false] If the command can only be used
-     * in guilds or not.
-     * @param {Boolean} [options.protected=false] If the command is protected from being
-     * disabled locally through settings.
-     * @param {Array<String>} [options.aliases] A list of alternative names for the command.
-     * @param {Array<String>} [options.memberPermissions] A list of permissions required for the
-     * guild member to run the command.
-     * @param {Array<String>} [options.clientPermissions] A list of permissions required for the
-     * client user to execute the command.
-     * @param {Function} [options.validatePermissions] A function to validate if the user
-     * has permission to run the command. This gives the freedom of not being required to check in
-     * the actual run method. The function receives the single message instance.
-     * @param {Array<Object>} [options.flags] A list of available flags to use when running the
-     * command.
-     * @param {String} options.flags.name The name of the flag.
-     * @param {String} [options.flags.value] The type of value for the flag.
-     * @param {String} [options.synopsis] The description for the flag. It should be treated as a
-     * full description, but making it short and understandable is good practice.
+     * @param {String} fileName The name of the command. This will be used to get the command name.
+     * @param {CommandCategory} category The category the command belongs to.
+     * @param {Object} options Options to pass to the command. They're all the same as the properties on the command.
      */
     constructor(bot, fileName, category, options) {
+        /**
+         * The client instance.
+         * @type {Client}
+         */
         this.client = bot;
       
+        /**
+         * The name of the command. The name comes from the file name (without the extension).
+         * @type {String}
+         */
         this.name = fileName.replace(".js", "");
+
+        /**
+         * The category the command is from.
+         * @type {CommandCategory}
+         */
         this.category = category;
+        
+        /**
+         * The syntax on how you're supposed to use the command.
+         * @type {String}
+         */
         this.usage = options.usage || "";
+
+        /**
+         * The short description on the command.
+         * @type {String}
+         */
         this.description = options.description || "No synopsis.";
+
+        /**
+         * The long description on the command.
+         * @type {String}
+         */
         this.fullDescription = options.fullDescription || null;
       
+        /**
+         * The rate limit on how fast you can use the command in seconds.
+         * @type {Number}
+         */
         this.cooldown = options.cooldown || 3;
+
+        /**
+         * How many arguments the user is required to use in order to call the command.
+         * @type {Number}
+         */
         this.requiredArgs = options.requiredArgs || 0;
       
+        /**
+         * Whether or not the command can only be used in NSFW channels.
+         * @type {Boolean}
+         */
         this.nsfw = options.nsfw || false;
+
+        /**
+         * Whether or not the command is enabled. Bot staff & developers can still use disabled commands.
+         * @type {Boolean}
+         */
         this.enabled = has(options, "enabled") ? options.enabled : true;
+
+        /**
+         * Whether or not the command can only be used in a guild/server.
+         * @type {Boolean}
+         */
         this.guildOnly = options.guildOnly || false;
+
+        /**
+         * Whether or not the command is protected from being disabled by the user.
+         * @type {Boolean}
+         */
         this.protected = options.protected || false;
       
+        /**
+         * An array of aliases the command can be called with.
+         * @type {Array<String>}
+         */
         this.aliases = options.aliases || [];
+
+        /**
+         * An array of permissions the user is required to have. The user must have at **least** one of the following
+         * permissions to use the command.
+         * @type {Array<String>}
+         */
         this.memberPermissions = options.memberPermissions || [];
+
+        /**
+         * An array of permissions the client member is required to have in the guild. The client member must have all
+         * the listed permissions to allow the command to be used.
+         * @type {Array<String>}
+         */
         this.clientPermissions = options.clientPermissions || [];
+
+        /**
+         * An extra function to validate if the command can be used or not.
+         * @function
+         * @param {Message} message The message to reference.
+         * @returns {Boolean|String} A boolean to check if it was successful or not. `true` if it passes, `false` if
+         * it doesn't (with no response). A string for the error message to be sent to the user.
+         */
         this.validatePermissions = options.validatePermissions || (() => true);
       
+        /**
+         * A collection of subcommands for the command.
+         * @type {Collection}
+         */
         this.subcommands = new Collection();
+
+        /**
+         * The basic flag info.
+         * @typedef {Object} CommandFlagOption
+         * @property {String} name The name of the flag. `null` by default, which may cause issues.
+         * @property {String} [value] The value the user is supposed to give the flag.
+         * @property {String} [description] The synopsis for the flag.
+         */
+
+        /**
+         * An array of flags for the command. Subcommands don't have their own field for this.
+         * @type {Array<CommandFlagOption>}
+         */
         this.flags = options.flags ? options.flags.map((flag) => Object.assign({
             name: null,
             value: null,
             description: "No synopsis."
         }, flag)) : [];
       
+        /**
+         * A collection of users rate limited from using the command.
+         * @type {Collection}
+         */
         this.ratelimits = new Collection();
+
+        /**
+         * A list of users who have already been notified about their rate limit. This is to present spamming.
+         * @type {Set<String>}
+         */
         this.ratelimitNoticed = new Set();
     }
   
