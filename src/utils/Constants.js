@@ -13,6 +13,8 @@ module.exports = {
     BOT_SUPPORT_SERVER_INVITE: "https://discord.gg/rpGQyb8",
     REPORT_EXCEPTION_CHANNEL_ID: "707760635722596462",
 
+    MAX_PUNISHMENT_REASON_LENGTH: 800,
+
     Discord: {
         MAX_MESSAGE_LENGTH: 2000,
         MAX_EMBED_TITLE_LENGTH: 256,
