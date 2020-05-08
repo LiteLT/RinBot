@@ -164,9 +164,10 @@ module.exports = class extends Command {
         let hasEmbeds = !message.channel.guild ||
         message.channel.permissionsOf(this.client.user.id).has("embedLinks");
         let prefix = message.prefix;
+        let command = category[0];
       
         if (flags.noembed || !hasEmbeds) {
-            let content = `__**${category[0].category} Category**__\n${category
+            let content = `__**${command.category.name} Category**__\n${command.category.description}\n\n${category
                 .map((command) => {
                     return `**${prefix + command.name}** — ${command.description} ${!command
                         .enabled ? "(disabled)" : ""}`;
@@ -177,12 +178,16 @@ module.exports = class extends Command {
       
         return message.channel.createMessage({
             embed: {
-                title: `${category[0].category} Category`,
+                description: command.category.description,
+                title: `${command.category.name} Category`,
                 color: Util.base10(Constants.Colors.DEFAULT),
-                description: category.map((command) => {
-                    return `**${prefix + command.name}** — ${command.description} ${!command
-                        .enabled ? "(disabled)" : ""}`;
-                }).join("\n")
+                fields: [{
+                    name: "Commands",
+                    value: category.map((command) => {
+                        return `**${prefix + command.name}** — ${command.description} ${!command
+                            .enabled ? "(disabled)" : ""}`;
+                    }).join("\n")
+                }]
             }
         });
     }
@@ -197,12 +202,12 @@ module.exports = class extends Command {
   
     get commandList() {
         let commands = {};
-      
+              
         for (const [, command] of this.client.commands) {
-            if (commands[command.category]) {
-                commands[command.category].push(command);
+            if (commands[command.category.name]) {
+                commands[command.category.name].push(command);
             } else {
-                commands[command.category] = [command];
+                commands[command.category.name] = [command];
             }
         }
       
