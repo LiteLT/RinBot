@@ -44,7 +44,7 @@ module.exports = class extends Command {
         "experience. My name and origins are unknown, but purpose has been defined to make cruel tasks easy. If you " +
         `seek my assistance in a server of yours, contact my owner, **${Util.userTag(botOwner)}**.`;
         let stats = [
-            `${Constants.Emojis.BOOK} Library: Eris **v${Eris.VERSION}**`,
+            `${Constants.Emojis.BOOK} Library: **Eris v${Eris.VERSION}**`,
             `${Constants.Emojis.COMPUTER} Servers: **${Util.commaify(this.client.guilds.size)}**`,
             `${Constants.Emojis.WOMAN_TIPPING_HAND} Users: **${Util.commaify(this.client.guilds
                 .reduce((prev, guild) => prev + guild.memberCount, 0))}**`
@@ -58,7 +58,7 @@ module.exports = class extends Command {
                 embed: {
                     description: `${description}\n\n**${[
                         `[Add ${this.client.user.username} (Private)](${inviteURL})`,
-                        `[Repository](${repositoryURL})`
+                        `[GitHub Repository](${repositoryURL})`
                     ].join(" | ")}**`,
                     color: Util.base10(Constants.Colors.DEFAULT),
                     author: {
