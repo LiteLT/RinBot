@@ -6,7 +6,7 @@ const Collection = require("./structures/Collection.js");
 const Logger = require("./structures/Logger.js");
 
 /**
- * @typedef {import("sqlite3").Database} Database
+ * @typedef {import("sqlite").Database} Database
  * @typedef {import("./structures/MessageCollector.js")} MessageCollector
  * @typedef {import("./structures/ReactionCollector.js")} ReactionCollector
  */
