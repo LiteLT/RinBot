@@ -6,6 +6,7 @@ const Collection = require("./structures/Collection.js");
 const Logger = require("./structures/Logger.js");
 
 /**
+ * @typedef {import("sqlite3").Database} Database
  * @typedef {import("./structures/MessageCollector.js")} MessageCollector
  * @typedef {import("./structures/ReactionCollector.js")} ReactionCollector
  */
@@ -62,6 +63,12 @@ class Rin extends Client {
          * @type {Set<ReactionCollector>}
          */
         this.reactionMonitors = new Set();
+
+        /**
+         * The database attached to the client. At the moment, it's an SQLite3 database.
+         * @type {Database}
+         */
+        this.db = null;
     }
   
     /**
