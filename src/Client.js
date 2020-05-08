@@ -3,41 +3,64 @@
 const { promises: fs } = require("fs");
 const { Client } = require("eris");
 const Collection = require("./structures/Collection.js");
-// const Schedule = require("./structures/Schedule.js");
 const Logger = require("./structures/Logger.js");
 
 /**
- * @typedef {Rin} Client
  * @typedef {import("./structures/MessageCollector.js")} MessageCollector
  * @typedef {import("./structures/ReactionCollector.js")} ReactionCollector
  */
 /**
  * Represents an extended class of the Client class from Eris.
- * @property {Logger} logger The logger instance for sending output to the console.
- * @property {Set} globalRatelimit The global ratelimit on the bot to prevent users from spamming.
- * @property {Collection} commands The command collection with the name being the key, and the command instance being
- * the value.
- * @property {Collection} aliases The alias collection with the name being the key, and the command being the value.
- * @property {Collection<String, Array<String>>} guildPrefixes A list of guild prefixes with the guild ID being the key,
- * and an array of strings being the value. The array can be blank if the guild holds no prefixes.
- * @property {Set<MessageCollector>} messageMonitors All the messages being monitored.
- * @property {Set<ReactionCollector>} reactionMonitors All the reactions being monitored.
+ * @extends {Client}
  */
 class Rin extends Client {
     /**
-     * Initializes the client.
      * @param {String} token The Discord token.
      * @param {Object} erisOptions The Eris options for the client.
      */
     constructor(token, erisOptions) {
         super(token, erisOptions);
         
+        /**
+         * The logger to send messages to the console.
+         * @type {Logger}
+         */
         this.logger = new Logger();
+
+        /**
+         * The global rate limit list to prevent abuse across multiple commands.
+         * @type {Set<String>}
+         */
         this.globalRatelimit = new Set();
+
+        /**
+         * A collection of commands.
+         * @type {Collection}
+         */
         this.commands = new Collection();
+
+        /**
+         * A collection of aliases to point to a command.
+         * @type {Collection}
+         */
         this.aliases = new Collection();
+        
+        /**
+         * A collection of settings per guild.
+         * @type {Collection}
+         */
         this.guildSettings = new Collection();
+
+        /**
+         * A list of active monitors for messages.
+         * @type {Set<MessageCollector>}
+         */
         this.messageMonitors = new Set();
+
+        /**
+         * A list of active monitors for reactions.
+         * @type {Set<ReactionCollector>}
+         */
         this.reactionMonitors = new Set();
     }
   
@@ -46,14 +69,26 @@ class Rin extends Client {
      * @returns {this} The client instance.
      */
     async loadCommands() {
-        let categories = await fs.readdir("src/commands/");
-      
+        let categories = (await fs.readdir("src/commands/")).sort((_a, b) => b.endsWith(".js") ? 1 : -1);
+        let categoryList = {};
+
         for (const category of categories) {
-            let commands = (await fs.readdir(`src/commands/${category}/`)).sort((a, b) => b.endsWith(".js") ? 1 : -1);
-          
+            if (category.endsWith(".js")) {
+                let name = category.replace(/\.js$/, "");
+
+                categoryList[name] = new (require(`./commands/${category}`))(name);
+                
+                continue;
+            }
+
+            
+            let categoryData = categoryList[category];
+            let commands = (await fs.readdir(`src/commands/${category}/`)).sort((_a, b) => b.endsWith(".js") ? 1 : -1);
+            
             for (const commandFile of commands) {
                 if (commandFile.endsWith(".js")) {
-                    let command = new (require(`./commands/${category}/${commandFile}`))(this, commandFile, category);
+                    let command = new (require(`./commands/${category}/` +
+                    commandFile))(this, commandFile, categoryData);
                     this.commands.set(command.name, command);
                   
                     for (const alias of command.aliases) {
