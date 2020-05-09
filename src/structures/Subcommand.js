@@ -6,6 +6,7 @@ const Turndown = require("turndown");
 /**
  * @typedef {import("../Client.js")} Client
  * @typedef {import("./Command.js")} Command
+ * @typedef {import("eris").Message} Message
  */
 /**
  * Represents a subcommand.
@@ -51,7 +52,9 @@ class Subcommand {
   
     /**
      * Runs the subcommand.
-     * @returns {any} The value returned from the command execution.
+     * @param {Message} message The message instance.
+     * @param {Array<String>} args Arguments passed to the command (excluding the subcommand name).
+     * @returns {Promise<*>} The value returned from the command execution.
      */
     async run() {
         this.client.logger.warn(`Command ${this.command.name}/${this.name} (${this.command
