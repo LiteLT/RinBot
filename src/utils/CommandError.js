@@ -72,6 +72,19 @@ class CommandError {
         return message.channel.createMessage(`Invalid Usage: \`${label}\` must be a ${type} between ${start} - ` +
         `${end}${suffix ? ` ${suffix}` : ""}.`);
     }
+
+    /**
+     * Sends a message notifying the user that their input was too long/short.
+     * @param {Message} message The message to reference.
+     * @param {String} label The type of user-input.
+     * @param {String} type What made the length bad. Usually long/short.
+     * @param {Number} length The length of what the user entered.
+     * @param {Number} required The minimum/maximum length.
+     * @returns {Promise<Message>} The created message.
+     */
+    static ERR_BAD_LENGTH(message, label, type, length, required) {
+        return message.channel.createMessage(`Invalid Usage: Your ${label} is too ${type}. [${length}/${required}]`);
+    }
 }
 
 module.exports = CommandError;
