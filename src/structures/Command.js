@@ -628,6 +628,68 @@ class Command {
             return roleName === search || (options.strict ? null : roleName.includes(search));
         }) || null;
     }
+
+    /**
+     * Find a channel in the guild.
+     * @param {Message} message The message to reference.
+     * @param {Array<String>} args Arguments to pass for searching. When searching for text channels, spaces will
+     * be replaced with dashes.
+     * @param {Object} [options] The options to use when searching.
+     * @param {Boolean} [options.strict=false] Whether or not to disallow matching names if the input is included in
+     * the name.
+     * @param {"any"|"text"|"voice"|"category"} [options.type="any"] The type of guild channels to allow.
+     */
+    findChannel(message, args, options = { type: "any", strict: true }) {
+        let channelID = args[0].match(/^(?:(\d+)|<#(\d+)>)$/);
+
+        if (channelID) {
+            let channel = message.channel.guild.channels.get(channelID[2] || channelID[1]);
+
+            if (channel) {
+                return channel;
+            }
+        }
+
+        let channels = message.channel.guild.channels;
+        let types = { text: 0, voice: 2, category: 4 };
+
+        if (options.type !== "any") {
+
+            channels = channels.filter((channel) => channel.type !== types[options.type]);
+        }
+
+        if (!Array.isArray(channels)) {
+            channels = channels.map((channel) => channel);
+        }
+
+        channels = channels.sort((a, b) => {
+            let bName = b.name.toLowerCase();
+            let aName = a.name.toLowerCase();
+
+            if (bName < aName) {
+                return 1;
+            } else if (bName > aName) {
+                return -1;
+            }
+
+            return 0;
+        });
+
+        
+        for (const channel of channels) {
+            let search = args.join(" ").toLowerCase();
+            let channelName = channel.name.toLowerCase();
+
+            if (channel.type === types.text) {
+                search = search.replace(/-/g, " ");
+                channelName = channelName.replace(/-/g, " ");
+            }
+
+            if (channelName === search || (options.strict ? null : channelName.includes(search))) {
+                return channel;
+            }
+        }
+    }
   
     /**
      * Handle any exception thrown by the command. It'll likely be handled by sending a message to
