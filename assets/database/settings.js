@@ -13,5 +13,14 @@ module.exports = {
         summary: "Set the moderator role for mod-only commands.",
         description: "Moderators gain access to the `tempmute` command.",
         maximumAmount: 10 // Why on earth would you need more than 10 moderator roles.
+    },
+    logging: {
+        summary: "Configure the channels for the bot to log messages to.",
+        description: `The most common logging options can be seen below.\n${[
+            {
+                name: "modlogs",
+                value: "Set the modlogs channel."
+            }
+        ].map((opt) => `**${opt.name}** — ${opt.value}`).join("\n")}`
     }
 };

@@ -94,12 +94,21 @@ module.exports = class extends EventListener {
             return message.channel.guild.roles.has(roleID);
         }).filter((role) => role);
 
+        let guildOptions = (await this.client.db.get(`SELECT * FROM guildOptions WHERE guildID = ?`, [
+            message.guildID
+        ]) ?? {
+            modlogs: null
+        });
+
         this.client.guildSettings.set(message.guildID, {
             prefixes: prefixData?.prefixes || null,
             categories: { disabled: [] },
             commands: { disabled: [] },
             subcommands: { disbled: [] },
-            moderation: { roles: modroles }
+            moderation: {
+                roles: modroles,
+                channel: guildOptions.modlogs
+            }
         });
     }
 };
