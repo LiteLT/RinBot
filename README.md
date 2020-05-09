@@ -100,6 +100,31 @@ CREATE TABLE modroles (
     PRIMARY KEY(roles, guildID)
 )
   ```
+  
+  ```sql
+CREATE TABLE punishments (
+    guildID TEXT,
+    caseID INTEGER,
+    deleted INTEGER,
+
+    type TEXT NOT NULL,
+    reason TEXT,
+    duration INTEGER,
+
+    userID TEXT NOT NULL,
+    userName TEXT NOT NULL,
+    userDiscriminator TEXT NOT NULL,
+
+    moderatorID TEXT NOT NULL,
+    moderatorName TEXT NOT NULL,
+    moderatorDiscriminator TEXT NOT NULL,
+
+    createdTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    editedTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (guildID, caseID)
+)
+  ```
 </details>
 
 8. Run the bot: `npm run start`! 🎉
