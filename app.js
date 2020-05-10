@@ -10,10 +10,6 @@ const bot = new Client(Constants.DISCORD_TOKEN, {
     restMode: true,
     allowedMentions: { roles: false, users: true, everyone: false },
     disableEvents: { TYPING_START: true }
-}, {
-    schedule: {
-        interval: 10000
-    }
 });
 
 (async () => {
