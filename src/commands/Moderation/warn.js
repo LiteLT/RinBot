@@ -9,7 +9,7 @@ module.exports = class extends Command {
             description: "Warns a member.",
             requiredArgs: 1,
             guildOnly: true,
-            aliases: ["strike"],
+            aliases: ["w", "strike"],
             validatePermissions: (message) => this.client.guildSettings.get(message.guildID).moderation.roles
                 .some((roleID) => message.member.roles.includes(roleID)),
             flags: [
