@@ -125,6 +125,14 @@ CREATE TABLE punishments (
     PRIMARY KEY (guildID, caseID)
 )
   ```
+
+  ```sql
+CREATE TABLE guildOptions (
+    guildID TEXT NOT NULL PRIMARY KEY,
+
+    modlogs TEXT
+)
+  ```
 </details>
 
 8. Run the bot: `npm run start`! 🎉
