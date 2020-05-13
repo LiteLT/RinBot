@@ -23,6 +23,7 @@ module.exports = class extends Command {
                 "the role won't be removed. The command will continue to run unless the member doesn't have any of " +
                 "the roles."
             ].map((str) => `${Constants.Emojis.WHITE_MEDIUM_SQUARE} ${str}`).join("\n"),
+            requiredArgs: 1,
             cooldown: 5,
             guildOnly: true,
             memberPermissions: ["manageRoles"],
@@ -32,5 +33,22 @@ module.exports = class extends Command {
 
     async run(message) {
         return Util.reply(message, `invalid subcommand. Use \`${message.prefix}help ${this.name}\` for subcommands.`);
+    }
+
+    /**
+     * Sends a message to the channel when every role could not be found.
+     * @param {Eris.Message} message
+     * @param {Object<String, Array<Eris.Role>>} roles An object with value being an array of roles.
+     * @param {Object<String, String>} types An object containing a list of roles that could not be added.
+     * @returns {Promise<Eris.Message>} The newly created message.
+     */
+    onRolesNotFound(message, roles, types) {
+        let content = `I could not add any of the listed roles.\`\`\`diff\n${Object.keys(roles.disallowed)
+            .filter((type) => roles.disallowed[type].length)
+            .map((type) => `- ${types[type]}\n${roles.disallowed[type].map((role) => role.name)
+                .join(", ")}`)
+            .join("\n\n")}\`\`\``;
+
+        return message.channel.createMessage(content);
     }
 };
