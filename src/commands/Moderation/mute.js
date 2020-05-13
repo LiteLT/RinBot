@@ -26,14 +26,23 @@ module.exports = class extends Command {
                 "`30m` - Mute for 30 minutes.",
                 "`1w` - Mute for one week.",
                 "`1h30m` - Mute for one hour and 30 minutes.",
-                "`30d` - Mute for 30 days (one month). This is equivilent to `4w2d`."
+                "`30d` - Mute for 30 days (one month). This is equivalent to `4w2d`."
             ].map((str) => `- ${str}`).join("\n"),
             requiredArgs: 1,
+            enabled: false,
             guildOnly: true,
             aliases: ["m", "tempmute", "tm"],
+            validatePermissions: (message) => {
+                let roles = this.client.guildSettings.get(message.guildID).moderation.roles;
+
+                if (roles.length) {
+                    return roles.some((roleID) => message.member.roles.includes(roleID));
+                }
+
+                return "There seems to be no configured moderator role on this server. To create one, check the help" +
+                    " manual for the `modrole` command.";
+            },
             clientPermissions: ["manageRoles"],
-            validatePermissions: (message) => this.client.guildSettings.get(message.guildID).moderation.roles
-                .some((roleID) => message.member.roles.includes(roleID)),
             flags: [
                 {
                     name: "silent",
@@ -45,13 +54,20 @@ module.exports = class extends Command {
                     name: "showmod",
                     value: "yes/no",
                     description: "Whether or not to show the moderator when notifying the member about their " +
-                    "punishment. This flag overrides the default setting for your server. This flag is redundent if " +
+                    "punishment. This flag overrides the default setting for your server. This flag is redundant if " +
                     "the `--silent` flag is enabled."
                 }
             ]
         });
     }
 
+    /**
+     * Runs the command.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {String} memberArg The member who's being punished.
+     * @param {String} [durationArg] The duration of the punishment.
+     * @param {Array<String>} [reasonArgs=[]] The reason for the punishment.
+     */
     async run(message, [memberArg, durationArg, ...reasonArgs]) {
         let member = this.findMember(message, [memberArg], { strict: true });
         let duration = (durationArg.match(/\d+[a-zA-Z]+/g) || []).reduce((prev, time) => prev + ms(time), 0);
