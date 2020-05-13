@@ -8,10 +8,19 @@ module.exports = class extends Command {
             usage: "<member> [reason]",
             description: "Warns a member.",
             requiredArgs: 1,
+            enabled: false,
             guildOnly: true,
             aliases: ["w", "strike"],
-            validatePermissions: (message) => this.client.guildSettings.get(message.guildID).moderation.roles
-                .some((roleID) => message.member.roles.includes(roleID)),
+            validatePermissions: (message) => {
+                let roles = this.client.guildSettings.get(message.guildID).moderation.roles;
+
+                if (roles.length) {
+                    return roles.some((roleID) => message.member.roles.includes(roleID));
+                }
+
+                return "There seems to be no configured moderator role on this server. To create one, check the help" +
+                    " manual for the `modrole` command.";
+            },
             flags: [
                 {
                     name: "silent",
@@ -23,13 +32,19 @@ module.exports = class extends Command {
                     name: "showmod",
                     value: "yes/no",
                     description: "Whether or not to show the moderator when notifying the member about their " +
-                    "punishment. This flag overrides the default setting for your server. This flag is redundent if " +
+                    "punishment. This flag overrides the default setting for your server. This flag is redundant if " +
                     "the `--silent` flag is enabled."
                 }
             ]
         });
     }
 
+    /**
+     * Runs the command.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {String} memberArg The member being punished.
+     * @param {Array<String>} [reasonArgs] The reason of the punishment.
+     */
     async run(message, [memberArg, ...reasonArgs]) {
         let member = this.findMember(message, [memberArg], { strict: true });
         let reason = reasonArgs.join(" ");
@@ -59,31 +74,32 @@ module.exports = class extends Command {
 
     /**
      * Notifies the punished user in DMs.
-     * @param {Message} message The message to reference.
-     * @param {Member} member The member who was punished.
+     * @param {Eris.Message} message The message to reference.
+     * @param {Eris.Member} member The member who was punished.
      * @param {String} [reason] The reason of the punishment.
-     * @returns {Promise<Message>} The message sent to the user. The message will be `null` if it failed to DM.
+     * @param {Boolean} showMod Whether or not to show the moderator to the user.
+     * @returns {Promise<Eris.Message>} The message sent to the user. The message will be `null` if it failed to DM.
      */
     async notify(message, member, reason, showMod) {
         try {
             let channel = await member.user.getDMChannel();
-            let msg = await channel.createMessage([
+
+            return await channel.createMessage([
                 `You have received a warning in **${message.channel.guild.name}**`,
                 showMod ? `from **${Util.userTag(message.author)}**` : null,
                 reason ? `for the following reason: ${reason}` : null
             ].filter((prop) => prop !== null).join(" "));
-
-            return msg;
         } catch {
             return null;
         }
     }
-    
+
     /**
      * Saves the punishment to the database and modlogs channel.
-     * @param {Message} message The message to reference.
-     * @param {Member} member The member who's being punished.
+     * @param {Eris.Message} message The message to reference.
+     * @param {Eris.Member} member The member who's being punished.
      * @param {String} reason The reason of the punishment.
+     * @param {Object} settings The guild settings.
      * @returns {Promise<void>}
      */
     async logPunishment(message, member, reason, settings) {
@@ -103,8 +119,8 @@ module.exports = class extends Command {
             "moderatorName",
             "moderatorDiscriminator"
         ];
-        let caseID = ((await this.client.db.get("SELECT caseID FROM punishments WHERE guildID = ? ORDER BY caseID " +
-        "DESC", [message.guildID])).caseID || 0) + 1;
+        let caseID = ((await this.client.db.get("SELECT caseID FROM punishments WHERE guildID = ? ORDER BY " +
+        "caseID DESC", [message.guildID])).caseID || 0) + 1;
 
         await this.client.db.run(`INSERT INTO punishments (${fields.join(", ")}) VALUES (${fields
             .map((field) => `$${field}`).join(", ")})`, {
@@ -154,17 +170,13 @@ module.exports = class extends Command {
     }
 
     /**
-     * @typedef {import("eris").Member} Member
-     * @typedef {import("eris").Message} Message
-     */
-    /**
      * Evaluates the member and arguments before continuing.
-     * @param {Message} message The message to reference.
-     * @param {Member} [member] The member found from the argument.
+     * @param {Eris.Message} message The message to reference.
+     * @param {Eris.Member} [member] The member found from the argument.
      * @param {String} memberArg The arguments passed to find the member.
      * @param {String} reason The reason for the punishment.
      * @returns {String|Boolean} A string for when the check failed to be sent to the member. A boolean for silent
-     * acception/rejection. `true` if the check was successful, and `false` if the check was unsuccessful.
+     * passing/rejection. `true` if the check was successful, and `false` if the check was unsuccessful.
      */
     check(message, member, memberArg, reason) {
         if (!member) {
