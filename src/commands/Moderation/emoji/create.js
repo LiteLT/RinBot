@@ -18,21 +18,15 @@ module.exports = class extends Subcommand {
             requiredArgs: 2
         });
     }
-  
+
     async run(message, [emoji, ...name]) {
-        if (!message.channel.permissionsOf(message.author.id).has("manageEmojis")) {
-            return message.channel.createMessage("You do not have permission to run this command.\n\n" +
-            "Missing: `Manage Emojis`.");
-        } else if (!message.channel.permissionsOf(this.client.user.id).has("manageEmojis")) {
-            return message.channel.createMessage("I do not have permission to perform this action.\n\n" +
-            "Missing: `Manage Emojis`.");
+        let res = this.command.check(message, name);
+
+        if (!res) {
+            return;
         }
 
         name = name.join(" ");
-        
-        if (name.length < 2 || name.length > 32) {
-            return CommandError.ERR_INVALID_RANGE(message, "name", "emoji name", 2, 32);
-        }
 
         let base64Image = null;
         let emojiInfo = Util.parseCustomEmoji(emoji);
@@ -52,7 +46,6 @@ module.exports = class extends Subcommand {
 
         if (typeof base64Image === "string") {
             let emoji = await message.channel.guild.createEmoji({ name, image: base64Image });
-            this.client.logger.log(emoji);
 
             return message.channel.createMessage(`The <${[
                 emoji.animated ? "a" : "",
