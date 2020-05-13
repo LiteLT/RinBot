@@ -12,7 +12,7 @@ module.exports = class extends Command {
             "in. It has the power to filter what type of messages are removed, from a single " +
             "member to the content in a message. A number in the range of **2** to **1000** " +
             "can be used.\n\n" +
-            
+
             "Most flags support a `value` field being the limit for how many messages " +
             "to purge for the flag. For example, if you passed `--bots=3`, the bot would purge " +
             "at most `3` messages from bots and no more. Flags not supporting the limit field " +
@@ -55,7 +55,7 @@ module.exports = class extends Command {
                     "useful for if the user left the server. You must supply the ID of the user, " +
                     "which can be found by enabling Developer Mode (Settings -> Appearance -> " +
                     "Developer Mode). Right click the user's avatar and press, \"Copy ID\"."
-                    
+
                 },
                 {
                     name: "bots",
@@ -93,26 +93,6 @@ module.exports = class extends Command {
                     value: "content",
                     description: "Removes messages ending with a phrase."
                 },
-                // {
-                //     name: "containslimit",
-                //     value: "number",
-                //     description: "Maximum purge size for `contains`."
-                // },
-                // {
-                //     name: "containsnotlimit",
-                //     value: "number",
-                //     description: "Maximum purge size for `containsnot`."
-                // },
-                // {
-                //     name: "startswithlimit",
-                //     value: "number",
-                //     description: "Maximum purge size for `startswith`."
-                // },
-                // {
-                //     name: "endswithlimit",
-                //     value: "number",
-                //     description: "Maximum purge size for `endswith`."
-                // },
                 {
                     name: "links",
                     value: "number",
@@ -151,11 +131,18 @@ module.exports = class extends Command {
         });
     }
 
+    /**
+     * Runs the command.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {Number} amountArg The number of messages to purge.
+     * @param {Array<String>} [memberSearch=[]] The search input for searching for a guild member.
+     * @return {Promise<Eris.Message|*>}
+     */
     async run(message, [amountArg, ...memberSearch]) {
         const flags = Util.messageFlags(message, this.client);
         let member = memberSearch.length ? null : "NONE";
 
-        if (member === null) {
+        if (!member) {
             if (flags.user) {
                 try {
                     member = await this.client.getRESTUser(memberSearch[0]);
@@ -283,13 +270,9 @@ module.exports = class extends Command {
     }
 
     /**
-     * @typedef {import("eris").Message} Message
-     * @typedef {import("eris").Member} Member
-     */
-    /**
      * Checks if a message passes the filter.
-     * @param {Message} msg The message instance.
-     * @param {Member} [member] The member to restrict messages to as a filter.
+     * @param {Eris.Message} msg The message instance.
+     * @param {Eris.Member} [member] The member to restrict messages to as a filter.
      * @param {Object} flags The flags to use when filtering. Flags can have a value signaling
      * the maximum number of items for the filter to collect from that type.
      * @param {Object} max The object to use for filtering (`{ key: number }`).
@@ -301,7 +284,7 @@ module.exports = class extends Command {
         }
 
         let escaped = false;
-      
+
         for (const flag of Object.keys(flags)) {
             switch (flag) {
                 case "bot":
@@ -314,7 +297,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "human":
@@ -326,7 +309,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "webhook":
@@ -337,9 +320,9 @@ module.exports = class extends Command {
 
                         return true;
                     }
-                    
+
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "contain":
@@ -353,7 +336,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "containnot":
@@ -367,7 +350,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "startwith":
@@ -381,7 +364,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "startwithnot":
@@ -396,7 +379,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "endwith":
@@ -410,7 +393,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "endwithnot":
@@ -424,7 +407,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "link":
@@ -439,7 +422,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "invite":
@@ -454,7 +437,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "image":
@@ -467,7 +450,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "mention":
@@ -479,7 +462,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "embed":
@@ -492,7 +475,7 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
 
                 case "file":
@@ -507,17 +490,11 @@ module.exports = class extends Command {
                     }
 
                     escaped = true;
-                    continue;
+                    break;
                 }
-
-                default: {} // eslint-disable-line no-empty
             }
         }
 
-        if (escaped) {
-            return false;
-        }
-
-        return true;
+        return !escaped;
     }
 };
