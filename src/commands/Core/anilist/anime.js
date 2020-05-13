@@ -20,7 +20,7 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
         const flags = Util.messageFlags(message, this.client);
         let adult = message.channel.nsfw ? "" : ", isAdult: false";
@@ -133,9 +133,9 @@ module.exports = class extends Subcommand {
                     youtube: (videoID) => Endpoints.YOUTUBE_VIDEO(videoID),
                     dailymotion: (videoID) => Endpoints.DAILYMOTION_VIDEO(videoID)
                 };
-              
+
                 let resolveURL = whitelisted[media.trailer.site];
-              
+
                 if (resolveURL) {
                     media.externalLinks.push({
                         site: "Trailer",
@@ -149,7 +149,7 @@ module.exports = class extends Subcommand {
                     media.reviews.nodes[index].siteUrl = Endpoints.ANILIST_REVIEW(review.id);
                 });
             }
-          
+
             return this.result(message, flags, media, sendType);
         }
     }
@@ -179,7 +179,7 @@ module.exports = class extends Subcommand {
         let rankedPopularity = media.rankings.find((rank) => {
             return rank.type === "POPULAR" && (rank.allTime || rank.year || rank.season);
         });
-        
+
         let invisibleSpace = "​ ";
         let bulletChar = "»";
         let emdash = "—";
@@ -227,7 +227,7 @@ module.exports = class extends Subcommand {
 
                 return dateformat(date, "yyyy");
             }
-            
+
             return null;
         };
 
@@ -258,7 +258,7 @@ module.exports = class extends Subcommand {
 
             return `#${rank.rank} ${type} ${Util.toTitleCase(rank.season)} ${rank.year}`;
         };
-        
+
         if (sendType === "embed") {
             msg = await message.channel.createMessage({
                 embed: {
@@ -377,7 +377,8 @@ module.exports = class extends Subcommand {
             return message.channel.createMessage(content);
         }
 
-        if (Util.hasChannelPermission(msg.channel, this.client.user, "addReactions")) {
+        if (msg && [undefined, true].includes(message.channel.permissionsOf?.(this.client.user.id)
+            .has("addReactions"))) {
             let emojis = [
                 Constants.Emojis.TRACK_PREVIOUS,
                 Constants.Emojis.ARROW_BACKWARDS,
@@ -395,18 +396,17 @@ module.exports = class extends Subcommand {
             } catch (ex) {
                 if (ex.code === 10008 || ex.code === 30010 ||
                     ex.code === 50013 || ex.code === 90001) {
-                    if (Util.hasChannelPermission(msg.channel, this.client
-                        .user, "manageMessages")) {
+                    if (message.channel.permissionsOf?.(this.client.user.id).has("manageMessages")) {
                         msg.removeReactions().catch(() => {});
                     }
-                  
+
                     return;
                 }
             }
 
             const mediaRelation = (relationType) => {
                 let types = {
-                    ADAPTATION: "Adapation",
+                    ADAPTATION: "Adaptation",
                     PREQUEL: "Prequel",
                     SEQUEL: "Sequel",
                     PARENT: "Parent",
@@ -447,7 +447,7 @@ module.exports = class extends Subcommand {
                                             media.isAdult ? Constants.Emojis.UNDERAGE : null,
                                             media.isLocked ? Constants.Emojis.LOCK : null
                                         ].filter((prop) => prop !== null).join(" ");
-    
+
                                         return `[${title}](${media.siteUrl})`;
                                     }), ` ${emdash} `, Constants.Discord
                                     .MAX_EMBED_FIELD_VALUE_LENGTH)
@@ -471,7 +471,7 @@ module.exports = class extends Subcommand {
                     title: `${embedTemplate.title} > Watch`,
                     description: Util.arrayJoinLimit(media.streamingEpisodes.map((episode) => {
                         return `${bulletChar} [${episode.title
-                            .replace(/\[|\]/g, (str) => `\\${str}`)}](${episode.url})`;
+                            .replace(/[\[\]]/g, (str) => `\\${str}`)}](${episode.url})`;
                     }), "\n", Constants.Discord.MAX_EMBED_DESCRIPTION_LENGTH)
                 } : null,
                 media.characters.edges.length ? {
@@ -543,9 +543,8 @@ module.exports = class extends Subcommand {
             });
 
             collector.on("reactionAdd", async (msg, emoji, userID) => {
-                if (message.channel.guild &&
-                    message.channel.permissionsOf(this.client.user.id).has("manageMessages")) {
-                    msg.removeReaction(emoji.name, userID);
+                if (message.channel.permissionsOf?.(this.client.user.id).has("manageMessages")) {
+                    await msg.removeReaction(emoji.name, userID);
                 }
 
                 if (isAwaitingResponse) {
@@ -557,29 +556,29 @@ module.exports = class extends Subcommand {
                         if (pageNumber === 1) {
                             return;
                         }
-                      
+
                         pageNumber = 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_BACKWARDS: {
                         if (pageNumber === 1) {
                             return;
                         }
-                        
+
                         pageNumber -= 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_FORWARD: {
                         if (pageNumber === pageLayouts.length) {
                             return;
                         }
-                      
+
                         pageNumber += 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.TRACK_NEXT: {
                         if (pageNumber === pageLayouts.length) {
                             return;
@@ -588,7 +587,7 @@ module.exports = class extends Subcommand {
                         pageNumber = pageLayouts.length;
                         break;
                     }
-                    
+
                     case Constants.Emojis.STOP_BUTTON: {
                         return collector.stop("stop");
                     }
@@ -616,7 +615,7 @@ module.exports = class extends Subcommand {
                         pageNumber = newPage;
                         break;
                     }
-                    
+
                     default: {
                         return;
                     }
@@ -654,7 +653,7 @@ module.exports = class extends Subcommand {
                         .length - 2)}"`,
                     description: media.map((media, index) => {
                         return `**${index + 1}.** [${this.mediaTitle(media.title)
-                            .replace(/\[|\]/g, (str) => `\\${str}`)}](${media.siteUrl})`;
+                            .replace(/[\[\]]/g, (str) => `\\${str}`)}](${media.siteUrl})`;
                     }).join("\n"),
                     footer: { text: `Select a number between 1 and ${media.length}.` }
                 }
@@ -696,17 +695,17 @@ module.exports = class extends Subcommand {
 
         return cleanName || "?";
     }
-    
+
     sendType(message, flags) {
         if (!flags.noembed && (!message.channel.guild || message.channel
             .permissionsOf(this.client.user.id).has("embedLinks"))) {
             return "embed";
         }
-        
-        
+
+
         return "plain";
     }
-        
+
 
     _request(query, variables) {
         return fetch(Endpoints.ANILIST_GRAPHQL, {
