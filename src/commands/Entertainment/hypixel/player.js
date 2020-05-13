@@ -23,7 +23,7 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
         let type = args[0].length > 16 ? "UUID" : "USERNAME";
         let usernameOrUUIDSafe = encodeURIComponent(args[0]);
@@ -42,7 +42,7 @@ module.exports = class extends Subcommand {
             switch (playerData.cause) {
                 case "Invalid API key": {
                     return message.channel.createMessage("There seems to be no API key present. " +
-                    "Please join the support server and contct a staff member.");
+                    "Please join the support server and contact a staff member.");
                 }
 
                 default: {
@@ -108,7 +108,7 @@ module.exports = class extends Subcommand {
             embedColor = colors.MVP_PLUS_PLUS;
             rank = "MVP++";
         }
-        
+
         if (rank === "NONE") {
             rank = null;
         } else if (!rank.includes("[")) {
@@ -195,15 +195,13 @@ module.exports = class extends Subcommand {
                                         let twitter = socialMedia[mediaName];
 
                                         if (/https?:\/\//.test(twitter)) {
-                                            socialMedia[mediaName] === "https://twitter.com/" +
-                                            twitter;
+                                            socialMedia[mediaName] = `https://twitter.com/${twitter}`;
                                         }
                                     } else if (mediaName === "YOUTUBE") {
                                         let youtube = socialMedia[mediaName];
 
                                         if (/https?:\/\//.test(youtube)) {
-                                            socialMedia[mediaName] === "https://www.youtube.com/" +
-                                            `user/${youtube}`;
+                                            socialMedia[mediaName] = `https://www.youtube.com/user/${youtube}`;
                                         }
                                     }
 
@@ -255,8 +253,7 @@ module.exports = class extends Subcommand {
             .permissionsOf(this.client.user.id).has("embedLinks"))) {
             return "embed";
         }
-        
-        
+
         return "plain";
     }
 
