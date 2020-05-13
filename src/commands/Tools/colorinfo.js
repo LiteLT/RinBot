@@ -23,6 +23,11 @@ module.exports = class extends Command {
         this.hexRegex = /^#?((?:[a-f0-9]{3}){1,2})$/i;
     }
 
+    /**
+     * Runs the command.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {Array<String>} args Arguments passed to the command.
+     */
     async run(message, args) {
         let colorRegex = [
             {
@@ -73,7 +78,7 @@ module.exports = class extends Command {
                     let colorCodes = colorInput.match(color.regex).slice(1);
                     colorCodes.forEach((color, index) => {
                         let colorNum = parseInt(color.replace("%", ""), 10);
-                        
+
                         if (index === 0) {
                             if (colorNum > 360) {
                                 colorCodes[index] = "360";
@@ -86,7 +91,7 @@ module.exports = class extends Command {
                             } else if (colorNum < 0) {
                                 colorCodes[index] = "0%";
                             }
-                            
+
                             if (!colorCodes[index].endsWith("%")) {
                                 colorCodes[index] = `${colorNum}%`;
                             }
@@ -124,6 +129,12 @@ module.exports = class extends Command {
         return CommandError.ERR_INVALID_ARG_TYPE(message, colorInput, "hex, RGB, HLS or CMYK color");
     }
 
+    /**
+     * Sends the result of the command back to the user.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {Object} color The color data.
+     * @return {Promise<Eris.Message>} The newly created message sent to the user.
+     */
     result(message, color) {
         let flags = Util.messageFlags(message, this.client);
         let sendType = this.sendType(message, flags);
@@ -167,15 +178,64 @@ module.exports = class extends Command {
         }
     }
 
+    /**
+     * Checks the type of message the bot should send to the channel.
+     * @param {Eris.Message} message The message to reference.
+     * @param {Object<String, String>} flags An object of flags passed as semi-arguments.
+     * @return {"embed" | "plain"} A string telling the type of message to send.
+     */
     sendType(message, flags) {
         if (!flags.noembed && (!message.channel.guild || message.channel.permissionsOf(this.client.user.id)
             .has("embedLinks"))) {
             return "embed";
         }
-        
+
         return "plain";
     }
 
+    /**
+     * Converts a normal array of color codes to their proper color.
+     * @param {"hsl" | "cmyk"} type The type of color code.
+     * @param {Array<String>} codes The color codes.
+     * @return {Array<String>} The new array.
+     */
+    transformColorCodes(type, codes) {
+        return codes.map((color, index) => {
+            let colorNum = parseInt(color, 10);
+
+            if (type === "hsl") {
+                if (colorNum <= 0) {
+                    return "0%";
+                } else if (index === 0) {
+                    if (colorNum >= 360) {
+                        return "360";
+                    }
+
+                    return color;
+                }
+            } else if (type === "cmyk") {
+                if (colorNum > 100) {
+                    return "100%";
+                } else if (colorNum < 0) {
+                    return "0%";
+                }
+            }
+
+            if (!color.endsWith("%")) {
+                return `${colorNum}%`;
+            }
+
+            return color;
+        });
+    }
+
+    /**
+     * Sends a request to the color API.
+     * @param {"hex" | "rgb" | "hsl" | "cmyk"} type The type of color it is.
+     * @param {String} urlColor The color for the
+     * @return {Promise<Object>} The color data.
+     * @private
+     */
     _request(type, urlColor) {
         return fetch(Endpoints.THE_COLOR_API_ID(type, urlColor)).then(this.checkStatus);
     }
