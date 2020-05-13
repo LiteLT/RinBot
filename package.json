@@ -1,14 +1,14 @@
 {
-  "name": "rin",
+  "name": "rinbot",
   "version": "1.0.0",
   "description": "A private Discord bot.",
   "main": "app.js",
+  "author": "Kinolite",
+  "license": "MIT",
   "scripts": {
     "start": "node --input-type=module --redirect-warnings=warnings.txt --report-uncaught-exception --title=RinBot --trace-deprecation --trace-warnings .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Kinolite",
-  "license": "MIT",
   "repository": {
     "url": "https://github.com/Kinolite/RinBot"
   },
@@ -16,8 +16,8 @@
     "chalk": "^3.0.0",
     "dateformat": "^3.0.3",
     "dotenv": "^8.2.0",
-    "eris": "^0.12.0",
-    "eslint": "^6.8.0",
+    "eris": "^0.13.1",
+    "eslint": "^7.0.0",
     "ms": "^2.1.2",
     "node-fetch": "^2.6.0",
     "sqlite": "^4.0.7",
