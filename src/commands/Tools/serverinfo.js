@@ -46,7 +46,7 @@ module.exports = class extends Command {
         let invite = inviteRegex.test(args[0])
             ? await this.client.getInvite(args[0].match(inviteRegex)[1], true).catch((err) => err)
             : null;
-        
+
         if (invite) {
             if (invite instanceof Error && invite.code === 10006) {
                 return CommandError.ERR_NOT_FOUND(message, "invite", args[0]);
@@ -66,8 +66,8 @@ module.exports = class extends Command {
 
         if (sendType === "embed" || sendType === "plain") {
             let guildOwner = guild.members.get(guild.ownerID) || null;
-            let verificationLevel = "N/A";
-            let contentFilter = "N/A";
+            let verificationLevel = null;
+            let contentFilter = null;
             let boostsPerTier = [2, 15, 30, 30];
             let regions = {
                 brazil: `${Constants.Emojis.FLAG_BRAZIL} Brazil`,
@@ -83,7 +83,7 @@ module.exports = class extends Command {
                 "us-east": `${Constants.Emojis.FLAG_UNITED_STATES} US East`,
                 "us-south": `${Constants.Emojis.FLAG_UNITED_STATES} US South`,
                 "us-west": `${Constants.Emojis.FLAG_UNITED_STATES} US West`,
-                
+
                 // Regions that don't appear on the regions tab.
                 amsterdam: `${Constants.Emojis.FLAG_NETHERLANDS} Amsterdam (Netherlands)`,
                 dubai: `${Constants.Emojis.FLAG_UNITED_ARAB_EMIRATES} Dubai (United Arab Emirates)`,
@@ -93,7 +93,7 @@ module.exports = class extends Command {
                 london: `${Constants.Emojis.FLAG_ENGLAND} London (England)`,
                 "south-korea": `${Constants.Emojis.FLAG_SOUTH_KOREA} South Korea`
             };
-            
+
             // eslint-disable-next-line default-case
             switch (guild.explicitContentFilter) {
                 case 0: {
@@ -129,13 +129,13 @@ module.exports = class extends Command {
                     "Minutes (Medium).";
                     break;
                 }
-                
+
                 case 3: {
                     verificationLevel = `${onEmoji} Verification Level - Member for 10+ Minutes ` +
                     "(High).";
                     break;
                 }
-                
+
                 case 4: {
                     verificationLevel = `${onEmoji} Verification Level - Verified Phone (Very ` +
                     "High).";
@@ -263,7 +263,7 @@ module.exports = class extends Command {
                 `${guild.mfaLevel === 1 ? onEmoji : offEmoji} 2FA Moderation.`,
                 contentFilter,
                 verificationLevel
-            ].filter((prop) => prop !== null).join("\n");
+            ].join("\n");
 
             return message.channel.createMessage(content);
         } else if (sendType === "invite-embed" || sendType === "invite-plain") {
@@ -316,7 +316,7 @@ module.exports = class extends Command {
         if (flags.icon || flags.iconurl) {
             return "icon";
         }
-        
+
         if (isInvite) {
             if (!flags.noembed && message.channel.permissionsOf(this.client.user.id)
                 .has("embedLinks")) {
