@@ -38,6 +38,7 @@ module.exports = class extends Command {
                 result = inspect(result, { maxArrayLength: 50, depth: parseInt(flags.depth || 1, 10) });
             }
 
+            // noinspection ES6MissingAwait
             message.addReaction(Constants.Emojis.BLUE_CHECK);
 
             return message.channel.createMessage("```js\n" + result + "```");
