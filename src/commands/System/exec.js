@@ -24,16 +24,16 @@ module.exports = class extends Command {
         }
       
         exec(args.join(" "), { shell: "/bin/zsh", timeout: 60000 }).then(({ stdout, stderr }) => {
-            const makeCodeblocks = (code) => `\`\`\`sh\n${code}\`\`\``;
+            const makeCodeblock = (code) => `\`\`\`sh\n${code}\`\`\``;
             let output = [];
           
           
             if (stdout) {
-                output.push(`**Standard Output**\n${makeCodeblocks(stdout)}`);
+                output.push(`**Standard Output**\n${makeCodeblock(stdout)}`);
             }
           
             if (stderr) {
-                output.push(`**Standard Error**\n${makeCodeblocks(stderr)}`);
+                output.push(`**Standard Error**\n${makeCodeblock(stderr)}`);
             }
           
             return message.channel.createMessage(output.join("\n").substring(0, 2000));
