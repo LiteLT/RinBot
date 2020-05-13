@@ -9,7 +9,7 @@ module.exports = class extends Command {
             description: "Displays the help manual.",
             fullDescription: "The help manual is the key to understanding how to use the bot. There are two things " +
             "you should know: arguments and examples usages.\n\n" +
-            
+
             "An **argument** is the text you pass a command after it's name. Arguments are separated by spaces, but " +
             "some commands have special cases (such as the `role` command). For example, if you do `ping nom nom`, " +
             "you've passed **2** arguments. The command name does not count as an argument. Commands use arguments " +
@@ -19,7 +19,7 @@ module.exports = class extends Command {
                 "`()` - Argument is semi-required. Not passing anything works, but if you pass an argument and it's " +
                 "invalid, the command will fail."
             ].map((str) => `- ${str}`).join("\n") + "\n\n" +
-            
+
             "Here are some examples usages:\n" + [
                 "Get all categories and commands: `help` (no args).",
                 "Look up all the commands in a category: `help main` (1 arg).",
@@ -35,43 +35,46 @@ module.exports = class extends Command {
             }]
         });
     }
-  
-    async run(message, [search, subcommand]) {
+
+    /**
+     * Runs the command.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {Array<String>} args Arguments passed to the command.
+     */
+    async run(message, args) {
         let flags = Util.messageFlags(message, this.client);
-      
-        if (!search) {
+
+        if (!args.length) {
             return this._sendNormal(message, flags);
         }
-      
-        let name = search.toLowerCase();
-        subcommand = subcommand && subcommand.toLowerCase();
-      
-        let command = this.client.commands.get(this.client.aliases.get(name) || name);
-      
-        if (command) {
-            if (subcommand) {
-                let sub = command.subcommands.get(subcommand);
-              
-                if (sub) {
-                    return this._sendSubcommand(message, command, sub, flags);
-                }
-              
-                return CommandError.ERR_NOT_FOUND(message, `subcommand of command ${command.name}\``, search);
-            }
-          
-            return this._sendCommand(message, command, flags);
-        }
-      
-        let commands = this.commandList;
-        let category = commands[Util.toTitleCase(name)];
-      
+
+        let name = args[0].toLowerCase();
+        let category = this.commandList[Util.toTitleCase(args.join(" "))];
+
         if (category) {
             return this._sendCategory(message, category, flags);
         }
-      
-        return CommandError.ERR_NOT_FOUND(message, "command or category", search);
+
+        let command = this.client.commands.get(this.client.aliases.get(name) || name);
+        let subcommand = args[1]?.toLowerCase();
+
+        if (command) {
+            if (subcommand) {
+                let sub = command.subcommands.get(subcommand);
+
+                if (sub) {
+                    return this._sendSubcommand(message, command, sub, flags);
+                }
+
+                return CommandError.ERR_NOT_FOUND(message, `subcommand of command \`${command.name}\``, subcommand);
+            }
+
+            return this._sendCommand(message, command, flags);
+        }
+
+        return CommandError.ERR_NOT_FOUND(message, "command or category", args.join(" "));
     }
-  
+
     _sendNormal(message, flags) {
         let commands = this.commandList;
         let hasEmbeds = !message.channel.guild || message.channel.permissionsOf(this.client.user.id).has("embedLinks");
@@ -138,10 +141,10 @@ module.exports = class extends Command {
                 return `**${category} — ${commands[category].length}**:\n\`${commands[category]
                     .map((command) => command.name).join("`, `")}\``;
             }).join("\n\n");
-          
+
             return message.channel.createMessage(content);
         }
-      
+
         return message.channel.createMessage({
             embed: {
                 description: description.join("\n"),
@@ -159,23 +162,23 @@ module.exports = class extends Command {
             }
         });
     }
-  
+
     _sendCategory(message, category, flags) {
         let hasEmbeds = !message.channel.guild ||
         message.channel.permissionsOf(this.client.user.id).has("embedLinks");
         let prefix = message.prefix;
         let command = category[0];
-      
+
         if (flags.noembed || !hasEmbeds) {
             let content = `__**${command.category.name} Category**__\n${command.category.description}\n\n${category
                 .map((command) => {
                     return `**${prefix + command.name}** — ${command.description} ${!command
                         .enabled ? "(disabled)" : ""}`;
                 }).join("\n")}`;
-          
+
             return message.channel.createMessage(content);
         }
-      
+
         return message.channel.createMessage({
             embed: {
                 description: command.category.description,
@@ -191,18 +194,18 @@ module.exports = class extends Command {
             }
         });
     }
-  
+
     _sendCommand(message, command, flags) {
         return command.buildHelp(message, null, { time: null, embed: !flags.noembed });
     }
-  
+
     _sendSubcommand(message, command, subcommand, flags) {
         return command.buildHelp(message, subcommand, { time: null, embed: !flags.noembed });
     }
-  
+
     get commandList() {
         let commands = {};
-              
+
         for (const [, command] of this.client.commands) {
             if (commands[command.category.name]) {
                 commands[command.category.name].push(command);
@@ -210,7 +213,7 @@ module.exports = class extends Command {
                 commands[command.category.name] = [command];
             }
         }
-      
+
         return commands;
     }
 };
