@@ -5,78 +5,76 @@ const { inspect } = require("util");
 const chalk = require("chalk");
 
 /**
- * Represents the utility class for logging input to the console.
+ * Represents the utility class for logging messages to the console.
  */
 class Logger {
     /**
-     * Initialize the logger.
-     * @param {Number} time The timestamp in milliseconds.
+     * @param {Number} [time=null] The timestamp in milliseconds.
      */
-    constructor(time) {
+    constructor(time = null) {
         this.timestamp = time;
     }
-  
+
     /**
      * Get the formatted time.
      * @returns {String} The formatted time to use as a prefix.
+     * @readonly
      */
     get time() {
         return `[${dateformat(this.timestamp || Date.now(), "mediumTime")}]`;
     }
-  
+
     /**
-     * Log something to the standard output.
-     * @param {...any} args Arguments to pass.
-     * @returns {void} Nothing.
+     * Logs a message to `stdout`. The default color is used.
+     * @param {...*} args Arguments to pass to `console.log`.
+     * @returns {void}
      */
     log(...args) {
         console.log(`${this.time} ${this.constructor.clean(args)}`);
     }
-  
+
     /**
-     * Log something to the standard output. Similar to `<Logger>.log`, but logs it in cyan.
-     * @param {...any} args Arguments to pass.
-     * @returns {void} Nothing.
+     * Logs a message to `stdout`. The color is cyan.
+     * @param {...*} args Arguments to pass to `console.info`.
+     * @returns {void}
      */
     info(...args) {
         console.info(chalk.cyan(`${this.time} ${this.constructor.clean(args)}`));
     }
-  
+
     /**
-     * Log something to the standard output. Similar to `<Logger>.log`, but logs it in green.
-     * @param {...any} args Arguments to pass.
-     * @returns {void} Nothing.
+     * Logs a message to `stdout`. The color is green.
+     * @param {...*} args Arguments to pass to `console.debug`.
+     * @returns {void}
      */
     debug(...args) {
         console.debug(chalk.green(`${this.time} ${this.constructor.clean(args)}`));
     }
-  
+
     /**
-     * Logs something to the standard error. This is similiar to `<Logger>.error`,
-     * but it's in yellow and has a [WARN] prefix before it.
-     * @param {...any} args Arguments to pass.
-     * @returns {void} Nothing.
+     * Logs a message to `stderr`. The color is yellow and prefixed with `[WARN]`.
+     * @param {...*} args Arguments to pass to `console.warn`.
+     * @returns {void}
      */
     warn(...args) {
-        console.warn(chalk.yellow(`${this.time} ${chalk.underline("[WARN]")} ${this
-            .constructor.clean(args)}`));
+        console.warn(chalk.yellow(`${this.time} ${chalk.underline("[WARN]")} ${this.constructor.clean(args)}`));
     }
-  
+
     /**
-     * Logs something to the standard error.
-     * @param {...any} args Arguments to pass.
-     * @returns {void} Nothing.
+     * Logs a message to `stderr`. The color is green and prefixed with `ERR!`
+     * @param {...*} args Arguments to pass to `console.error`.
+     * @returns {void}
      */
     error(...args) {
         console.error(chalk.redBright(`${this.time} ${chalk.underline("ERR!")} ${this
             .constructor.clean(args)}`));
     }
-  
+
     /**
-     * Sanitize input for the console.
+     * Sanitizes a message to log to the standard output/error.
+     * @param {Array<*>} args The message to sanitize.
+     * @returns {String} The message joined with a space.
      * @static
-     * @param {Array<any>} args Arguments to pass.
-     * @returns {String} A joined string of arguments.
      */
     static clean(args) {
         return args.map((argument) => {
@@ -85,7 +83,7 @@ class Logger {
             } else if (typeof argument !== "string") {
                 return inspect(argument);
             }
-          
+
             return argument;
         }).join(" ");
     }
