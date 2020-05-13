@@ -1,7 +1,7 @@
 "use strict";
 
-const { Util, Constants, Subcommand, CommandError } = require("../../../index.js");
 const { modrole: modroleSettings } = require("../../../../assets/database/settings.js");
+const { Util, Subcommand } = require("../../../index.js");
 
 module.exports = class extends Subcommand {
     constructor(...args) {
@@ -13,11 +13,10 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
-        let baseCommand = this.client.commands.get("modrole");
         let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */).map((arg) => {
-            return baseCommand.findRole(message, [arg], { strict: true }) || arg;
+            return this.command.findRole(message, [arg], { strict: true }) || arg;
         }), (role) => typeof role !== "string");
 
         if (notFoundRoles.length) {
@@ -25,7 +24,7 @@ module.exports = class extends Subcommand {
                 .join("\", \"")}"`);
         }
 
-        let modroles = (await baseCommand.query(message, "roles"))?.roles ?? [];
+        let modroles = (await this.command.query(message, "roles"))?.roles ?? [];
         let hasEntry = false;
 
         if (modroles.length) {
@@ -69,7 +68,7 @@ module.exports = class extends Subcommand {
             ]);
         }
 
-        baseCommand.updateSettings(message.guildID, modroles);
+        this.command.updateSettings(message.guildID, modroles);
 
         return message.channel.createMessage(`The \`${roles.map((role) => role.name)
             .join("`, `")}\` ${roles.length > 1
