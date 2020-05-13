@@ -19,42 +19,46 @@ module.exports = class extends Command {
         // Note: only 5 results!!!
         let history = [
             {
-                date: "May 2th, 2020",
-                value: [
-                    "Created the `changelog` command.",
-                    "Created the `emoji` command.",
-                    "Created the `create` subcommand of `emoji`.",
-                    "Created the `delete` subcommand of `emoji`.",
-                    "Created the `info` subcommand of `emoji`.",
-                    "Created the `rename` subcommand of `emoji`."
-                ].map((str) => `- ${str}`).join("\n")
-            },
-            {
-                date: "May 4th, 2020",
-                value: [
-                    "Created the `modrole` command.",
-                    "Created the `add` subcommand of `modrole`.",
-                    "Created the `view` subcommand of `modrole`."
-                ].map((str) => `- ${str}`).join("\n")
-            },
-            {
-                date: "May 5th, 2020",
-                value: [
-                    "Created the `remove` subcommand of `modrole`.",
-                    "Created the `clear` subcommand of `modrole`."
-                ].map((str) => `- ${str}`).join("\n")
-            },
-            {
                 date: "May 7th, 2020",
                 value: [
-                    "Removes the `Kitsu` command and its subcommands.",
-                    "Created public GitHub repository (<https://github.com/Kinolite/RinBot>)."
+                    "Removed the `Kitsu` command and its subcommands.",
+                    "Created a public GitHub repository (<https://github.com/Kinolite/RinBot>)."
                 ].map((str) => `- ${str}`).join("\n")
             },
             {
                 date: "May 8th, 2020",
                 value: [
                     "Added category descriptions in the help manual (`help <category>`)."
+                ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "May 11th, 2020",
+                value: [
+                    "Fixed an issue with the `Hypixel Guild` subcommand where guild members would not be fetched, " +
+                    "causing an error (credit: `HoggyTheWizard#8015`)."
+                ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "May 12th, 2020",
+                value: [
+                    "Changed the `Activity` field in the `userinfo` command to display the activity details instead" +
+                    " of the large text (minor).",
+
+                    "Fixed an issue in the `userinfo` command where the command would throw an error on certain" +
+                    " activities.",
+
+                    "Fixed an issue in the `emoji/create` and `emoji/rename` subcommands where the subcommand would" +
+                    " throw an error due to the name argument not being converted properly.",
+
+                    "Fixed an issue in the `purge` command where it would always say no guild member was found," +
+                    " regardless of if any input for the member was entered or not."
+                ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "May 13th, 2020",
+                value: [
+                    "Created the `Hypixel BedWars` category.",
+                    "Created the `bw-verify` command."
                 ].map((str) => `- ${str}`).join("\n")
             }
         ];
