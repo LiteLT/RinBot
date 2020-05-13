@@ -18,7 +18,7 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
         const flags = Util.messageFlags(message, this.client);
         let query = `
@@ -117,7 +117,8 @@ module.exports = class extends Subcommand {
             return message.channel.createMessage(content);
         }
 
-        if (Util.hasChannelPermission(msg.channel, this.client.user, "addReactions")) {
+        if (msg && [undefined, true].includes(message.channel.permissionsOf?.(this.client.user.id)
+            .has("addReactions"))) {
             let emojis = [
                 Constants.Emojis.TRACK_PREVIOUS,
                 Constants.Emojis.ARROW_BACKWARDS,
@@ -135,11 +136,10 @@ module.exports = class extends Subcommand {
             } catch (ex) {
                 if (ex.code === 10008 || ex.code === 30010 ||
                     ex.code === 50013 || ex.code === 90001) {
-                    if (Util.hasChannelPermission(msg.channel, this.client
-                        .user, "manageMessages")) {
+                    if (message.channel.permissionsOf?.(this.client.user.id).has("manageMessages")) {
                         msg.removeReactions().catch(() => {});
                     }
-                  
+
                     return;
                 }
             }
@@ -184,7 +184,7 @@ module.exports = class extends Subcommand {
             collector.on("reactionAdd", async (msg, emoji, userID) => {
                 if (message.channel.guild &&
                     message.channel.permissionsOf(this.client.user.id).has("manageMessages")) {
-                    msg.removeReaction(emoji.name, userID);
+                    await msg.removeReaction(emoji.name, userID);
                 }
 
                 if (isAwaitingResponse) {
@@ -196,29 +196,29 @@ module.exports = class extends Subcommand {
                         if (pageNumber === 1) {
                             return;
                         }
-                      
+
                         pageNumber = 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_BACKWARDS: {
                         if (pageNumber === 1) {
                             return;
                         }
-                        
+
                         pageNumber -= 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_FORWARD: {
                         if (pageNumber === pageLayouts.length) {
                             return;
                         }
-                      
+
                         pageNumber += 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.TRACK_NEXT: {
                         if (pageNumber === pageLayouts.length) {
                             return;
@@ -227,7 +227,7 @@ module.exports = class extends Subcommand {
                         pageNumber = pageLayouts.length;
                         break;
                     }
-                    
+
                     case Constants.Emojis.STOP_BUTTON: {
                         return collector.stop("stop");
                     }
@@ -255,7 +255,7 @@ module.exports = class extends Subcommand {
                         pageNumber = newPage;
                         break;
                     }
-                    
+
                     default: {
                         return;
                     }
@@ -293,7 +293,7 @@ module.exports = class extends Subcommand {
                         .MAX_EMBED_TITLE_LENGTH - prefix.length - 2)}"`,
                     description: characters.map((char, index) => {
                         return `**${index + 1}.** [${this.personName(char.name)
-                            .replace(/\[|\]/g, (str) => `\\${str}`)}](${char.siteUrl})`;
+                            .replace(/[\[\]]/g, (str) => `\\${str}`)}](${char.siteUrl})`;
                     }).join("\n"),
                     footer: {
                         text: `Select a number between 1 and ${characters.length}.`
@@ -337,14 +337,13 @@ module.exports = class extends Subcommand {
 
         return cleanName || "?";
     }
-    
+
     sendType(message, flags) {
         if (!flags.noembed && (!message.channel.guild || message.channel
             .permissionsOf(this.client.user.id).has("embedLinks"))) {
             return "embed";
         }
-        
-        
+
         return "plain";
     }
 
