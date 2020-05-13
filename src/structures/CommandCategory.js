@@ -3,7 +3,7 @@
  */
 class CommandCategory {
     /**
-     * @param {String} name The naem of the category.
+     * @param {String} name The name of the category.
      * @param {String} [description=""] The description of the category.
      */
     constructor(name, description = "") {
