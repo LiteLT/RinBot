@@ -3,17 +3,10 @@
 const MessageCollector = require("../structures/MessageCollector.js");
 const Constants = require("./Constants.js");
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms, ms));
-const quotes = ['"', "'", '“”', '‘’'];
 
 /**
- * @typedef {import("eris").Role} Role
- * @typedef {import("eris").User} User
- * @typedef {import("eris").Guild} Guild
- * @typedef {import("eris").Member} Member
- * @typedef {import("../Client.js")} Client
- * @typedef {import("eris").Message} Message
- * @typedef {import("eris").TextChannel} TextChannel
- * @typedef {import("../structures/Command/Command.js")} Command
+ * @typedef {import("../Rin.js")} Client
+ * @typedef {import("../structures/Command.js")} Command
  */
 /**
  * Represents the Utility static class for performing common functions.
@@ -45,7 +38,7 @@ class Util {
     static sleep(ms) {
         return sleep(ms);
     }
-  
+
     /**
      * Get the tag of a user.
      * @param {User|Member} user The Discord user instance. Passing a guild member instance works too, but it's not
@@ -58,8 +51,8 @@ class Util {
 
     /**
      * Get the highest role from a member.
-     * @param {Member} member The member to get the role for.
-     * @returns {Role} The role.
+     * @param {Eris.Member} member The member to get the role for.
+     * @returns {Eris.Role} The role.
      */
     static memberHighestRole(member) {
         return member.roles
@@ -70,7 +63,7 @@ class Util {
     /**
      * Parses a custom emoji's markdown form to an object.
      * @param {String} emojiText The emoji's markdown text.
-     * @returns {{ id: String, name: String, animated: Boolean }} The name and ID of the custom emoji.
+     * @returns {?{ id: String, name: String, animated: Boolean }} The name and ID of the custom emoji.
      */
     static parseCustomEmoji(emojiText) {
         let regex = emojiText.match(/<(a)?:(\w{2,32}):(\d{17,19})>/);
@@ -96,7 +89,7 @@ class Util {
     static hasChannelPermission(channel, member, perm) {
         return !channel.guild || channel.permissionsOf(member.id).has(perm);
     }
-  
+
     /**
      * Converts a hex to a base10 integer.
      * @param {String} hex The hex to convert.
@@ -105,7 +98,7 @@ class Util {
     static base10(hex) {
         return parseInt(hex.replace("#", ""), 16);
     }
-  
+
     /**
      * Makes every starting letter of a word capital in a string.
      * @param {String} str The string to convert to title case.
@@ -127,22 +120,22 @@ class Util {
     static stringLimit(str, limit) {
         return str.length > limit ? str.substring(0, limit - 3) + "..." : str;
     }
-  
+
     /**
      * Filters out an array by returning two arrays that pass and fail the condition function.
      * @param {Array<any>} arr The array to use.
      * @param {Function} fn The function to run on each element in the array. The function receives the item, index and
-     * value of `this`. 
+     * value of `this`.
      * @param {any} thisArg The `this` value to use in the function.
-     * @returns {Array<Array<any>, Array<any>>} The result of the function. The first array contains the values
-     * returning a truthly value, while the 2nd contain the ones failing to pass.
+     * @returns {Array<Array<*>>} The result of the function. The first array contains the values
+     * returning a truthfully value, while the 2nd contain the ones failing to pass.
      */
-    static arrayPartition(arr, fn, thisArg) {
-        fn = thisArg === undefined ? fn : fn.bind(thisArg);
+    static arrayPartition(arr, fn, thisArg = null) {
+        fn = thisArg === null ? fn : fn.bind(thisArg);
         let passed = [];
         let failed = [];
         let index = 0;
-      
+
         for (const item of arr) {
             if (fn(item, index, arr)) {
                 passed.push(item);
@@ -150,10 +143,10 @@ class Util {
                 failed.push(item);
             }
         }
-      
+
         return [passed, failed];
     }
-  
+
     /**
      * Filters out repeating entries in an array.
      * @param {Array<any>} arr The array to filter.
@@ -162,39 +155,39 @@ class Util {
      */
     static arrayUnique(arr) {
         let list = [];
-      
+
         for (const item of arr) {
             if (!list.includes(item)) {
                 list.push(item);
             }
         }
-      
+
         return list;
     }
-  
+
     /**
      * Joins an array of strings leaving out elements exceeding the character limit.
      * @param {Array<String>} arr The array to join.
-     * @param {String} delim The `<Array>.join()` string to place in between items when joining.
+     * @param {String} delimiter The `<Array>.join()` string to place in between items when joining.
      * @param {Number} strMax The maximum length of the join character count.
      * @returns The joined array.
      */
-    static arrayJoinLimit(arr, delim, strMax) {
+    static arrayJoinLimit(arr, delimiter, strMax) {
         let res = [];
         let length = 0;
-      
+
         for (const item of arr) {
-            if (length + delim.length + item.length > strMax) {
+            if (length + delimiter.length + item.length > strMax) {
                 break;
             } else {
                 res.push(item);
-                length += item.length + delim.length;
+                length += item.length + delimiter.length;
             }
         }
-      
-        return res.join(delim);
+
+        return res.join(delimiter);
     }
-  
+
     /**
      * Get the prefix used in the sent message. If the message is sent in a guild, it will attempt to find set prefixes
      * in the guild. This may pose a problem when checking old messages.
@@ -216,22 +209,22 @@ class Util {
 
         return prefix && message.content.substring(prefix.length).charAt(0) !== " " ? prefix : null;
     }
-  
+
     /**
      * Get the arguments passed in the sent message.
-     * @param {Message} message The sent message. 
+     * @param {Message} message The sent message.
      * @param {Client} bot The client instance.
      * @returns {Array<String>} An array of strings for each argument, or null (if no prefix could be found from
      * `Util.messagePrefix`).
      */
     static messageArgs(message, bot) {
         let prefix = message.prefix || Util.messagePrefix(message, bot);
-      
+
         if (prefix) {
             return message.content.substring(prefix.length).trim().split(/ +(?:--[\w=]+)*/g).slice(1)
                 .filter((arg) => arg);
         }
-      
+
         return null;
     }
 
@@ -248,11 +241,11 @@ class Util {
         let flags = message.content.split(/ +/g)
             .filter((str) => str.startsWith("--") && str.slice(2).length >= 2)
             .map((str) => str.slice(2));
-      
+
         if ((message.prefix || Util.messagePrefix(message, bot)) === "--") {
             flags = flags.slice(1);
         }
-      
+
         let flagObj = {};
 
         for (const flag of flags) {
@@ -263,25 +256,25 @@ class Util {
 
         return flagObj;
     }
-  
+
     /**
      * Get the command called for the sent message. This is unreliable if the user updates/edits their message.
-     * @param {Message} message The sent message.
+     * @param {Eris.Message} message The sent message.
      * @param {Client} bot The client instance.
-     * @returns {Command} The command called in the message, or null.
+     * @returns {?Command} The command called in the message, or null.
      */
     static messageCommand(message, bot) {
         let prefix = message.prefix || Util.messagePrefix(message, bot);
-      
+
         if (prefix) {
             let label = message.content.substring(prefix.length).trim().split(/ +(?:--[\w=]+)*/g)[0].toLowerCase();
-          
+
             return bot.commands.get(bot.aliases.get(label) || label) || null;
         }
-      
+
         return null;
     }
-  
+
     /**
      * Prompts the user for a response.
      * @param {Message} message The message instance.
@@ -325,7 +318,7 @@ class Util {
 
     /**
      * Wait to delete a message.
-     * @param {Message} msg The message to delete. 
+     * @param {Message} msg The message to delete.
      * @param {Object} [options] The options to use when deleting messages.
      * @param {Number} [options.time] The time to wait before deleting the message. This uses the `Util.sleep(ms)`
      * method.
@@ -339,10 +332,10 @@ class Util {
 
             return msg.delete(options.reason);
         }
-      
+
         throw new TypeError(`Invalid time: ${options.time}`);
     }
-  
+
     /**
      * Get the client member in the guild. If the member cannot be found in the cache, a raw request will be sent to
      * fetch the member.
@@ -352,19 +345,19 @@ class Util {
      */
     static guildMe(bot, guild) {
         let me = guild.members.get(bot.user.id);
-      
+
         if (me) {
             return Promise.resolve(me);
         }
-      
+
         return guild.getRESTMember(bot.user.id);
     }
-  
+
     /**
      * Reply to a message with a mention prefixing it.
      * @param {Message} message The message to reply to.
-     * @param {String} content The content to send with the messag. Embeds are not supported.
-     * @param {{ file: Buffer, name: String }} [file] The file contents to senda long with it.
+     * @param {String} content The content to send with the message. Embeds are not supported.
+     * @param {{ file: Buffer, name: String }} [file] The file contents to send a long with it.
      * @returns {Message|Promise<Error>} The created message, or an error (if it failed to send the message).
      */
     static reply(message, content, file) {
