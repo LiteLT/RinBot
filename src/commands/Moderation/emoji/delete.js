@@ -10,17 +10,15 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, [emojiArg]) {
-        if (!message.channel.permissionsOf(message.author.id).has("manageEmojis")) {
-            return message.channel.createMessage("You do not have permission to run this command.\n\n" +
-            "Missing: `Manage Emojis`.");
-        } else if (!message.channel.permissionsOf(this.client.user.id).has("manageEmojis")) {
-            return message.channel.createMessage("I do not have permission to perform this action.\n\n" +
-            "Missing: `Manage Emojis`.");
+        let res = this.command.check(message, null);
+
+        if (!res) {
+            return;
         }
 
-        let emoji = this.client.commands.get("emoji").findEmoji(message.channel.guild, emojiArg);
+        let emoji = this.command.findEmoji(message.channel.guild, emojiArg);
 
         if (emoji) {
             await message.channel.guild.deleteEmoji(emoji.id);
