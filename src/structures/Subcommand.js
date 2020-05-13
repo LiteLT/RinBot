@@ -4,25 +4,11 @@ const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 const Turndown = require("turndown");
 
 /**
- * @typedef {import("../Client.js")} Client
+ * @typedef {import("../Rin.js")} Client
  * @typedef {import("./Command.js")} Command
- * @typedef {import("eris").Message} Message
- */
-/**
- * Represents a subcommand.
- * @property {Client} client The client instance.
- * @property {Command} command The parent command.
- * @property {String} name The subcommand's name.
- * @property {Boolean} enabled Whether the subcommand is enabled or not.
- * @property {String} usage The usage/syntax on how to use the subcommand.
- * @property {Number} requiredArgs The number of arguments required to pass before
- * running the subcommand.
- * @property {String} description The short description of the subcommand.
- * @property {String} fullDescription The long description of the subcommand.
  */
 class Subcommand {
     /**
-     * Initializes the subcommand.
      * @param {Client} client The client instance.
      * @param {Command} command The parent command.
      * @param {String} subcommandFile The file name of the subcommand file.
@@ -35,36 +21,86 @@ class Subcommand {
      * @param {String} [options.fullDescription=""] The full description for the subcommand.
      */
     constructor(client, command, subcommandFile, options) {
+        /**
+         * The client instance.
+         * @type {Client}
+         */
         this.client = client;
+
+        /**
+         * The parent command.
+         * @type {Command}
+         */
         this.command = command;
-      
+
+        /**
+         * The name of the subcommand.
+         * @type {String}
+         */
         this.name = subcommandFile.replace(".js", "");
+
+        /**
+         * Whether or not the subcommand is enabled.
+         * @type {Boolean}
+         */
         this.enabled = has(options, "enabled") ? options.enabled : true;
-      
+
+        /**
+         * The syntax on how to use the subcommand.
+         * @type {String}
+         */
         this.usage = options.usage || "";
+
+        /**
+         * How many arguments are required in order to use the subcommand.
+         * @type {Number}
+         */
         this.requiredArgs = options.requiredArgs || 0;
+
+        /**
+         * The short description for the subcommand.
+         * @type {String}
+         */
         this.description = options.description || "";
+
+        /**
+         * The full description for the subcommand.
+         * @type {String}
+         */
         this.fullDescription = options.fullDescription || "";
 
+        /**
+         * The Turndown instance.
+         * @type {TurndownService}
+         */
         this.markdown = new Turndown({ hr: "- - -", fence: "```", codeBlockStyle: "fenced" });
+
+        // noinspection JSValidateTypes
+        /**
+         * Escapes text that should not be present. This method is overwritten to allow markdown to be displays in
+         * Discord embeds.
+         * @param {String} str The string to escape.
+         * @returns {String} The new string.
+         */
         this.markdown.escape = (str) => str;
     }
-  
+
+    // noinspection JSCommentMatchesSignature
     /**
      * Runs the subcommand.
-     * @param {Message} message The message instance.
-     * @param {Array<String>} args Arguments passed to the command (excluding the subcommand name).
+     * @param {Eris.Message} message The message instance.
+     * @param {?Array<String>} args Arguments passed to the command (excluding the subcommand name).
      * @returns {Promise<*>} The value returned from the command execution.
      */
     async run() {
-        this.client.logger.warn(`Command ${this.command.name}/${this.name} (${this.command
-            .category}) has no run method.`);
+        this.client.logger.warn(`Subcommand ${this.command.name}/${this.name} (${this.command.category
+            .name}) has no run method.`);
     }
 
     /**
-     * Check the status sent by an HTTP(s) request.
+     * Checks the status code of an HTTP(s) request.
      * @param {Response} res The response sent back.
-     * @param {String} [convert=json] The type of value to convert the response to. 
+     * @param {String} [convert=json] The type of value to convert the response to.
      * @param {Array<Number>} [statusCodes=[]] An array of valid status codes. The method checks if
      * the response was OK (code >= 200 && code <= 300), so there's no need to pass codes
      * in the 200 range.
@@ -73,10 +109,10 @@ class Subcommand {
         if (res.ok || statusCodes.includes(res.status)) {
             return res[convert]();
         }
-      
+
         let err = new Error(`${res.status} ${res.statusText}`);
         err.code = res.status;
-      
+
         throw err;
     }
 
@@ -93,7 +129,7 @@ class Subcommand {
      * (||text||).
      * @param {"remove"|"keep"} [options.alignment="remove"] How to handle parsing aligned text.
      * @param {"remove"|"snip"} [options.images="remove"] How to handle parsing images.
-     * @param {"replace"|"remove"} [optional.youtubeLinks="replace"] How to handle parsing YouTube
+     * @param {"replace"|"remove"} [options.youtubeLinks="replace"] How to handle parsing YouTube
      * video links.
      */
     parseALMarkdown(text, options = {}) {
@@ -105,10 +141,10 @@ class Subcommand {
             images: "remove",
             youtubeLinks: "replace"
         }, options);
-        
-        let output = this.markdown.turndown(options
-            .linebreak === "toHTML" ? text.replace(/\n/g, "<br>") : text);
-        
+
+        // noinspection JSValidateTypes
+        let output = this.markdown.turndown(options.linebreak === "toHTML" ? text.replace(/\n/g, "<br>") : text);
+
         if (options.longUnderline === "remove") {
             output = output.replace(/_{3,}/g, "");
         }
