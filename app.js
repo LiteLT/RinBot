@@ -1,4 +1,4 @@
-const { Constants, Client: Client } = require("./src/index.js");
+const { Constants, Client } = require("./src/index.js");
 const { open: openDB } = require("sqlite");
 const sqlite3 = require("sqlite3");
 const bot = new Client(Constants.DISCORD_TOKEN, {
@@ -18,9 +18,10 @@ const bot = new Client(Constants.DISCORD_TOKEN, {
             filename: "./database.db",
             driver: sqlite3.cached.Database
         });
-        bot.init();
+
+        await bot.init();
     } catch (ex) {
         bot.logger.error(ex);
-        bot.gracefulExit(1);
+        await bot.gracefulExit(1);
     }
 })();
