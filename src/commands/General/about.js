@@ -37,7 +37,7 @@ module.exports = class extends Command {
         if (flags.learn) {
             return this.learn(message, flags.noembed);
         }
-        
+
         let sendType = this.sendType(message, flags.noembed);
         let botOwner = await this.client.getRESTUser(Constants.BOT_OWNER);
         let description = `${this.client.user.username} is a private assistant meant to aid you in your Discord ` +
@@ -49,7 +49,7 @@ module.exports = class extends Command {
             `${Constants.Emojis.WOMAN_TIPPING_HAND} Users: **${Util.commaify(this.client.guilds
                 .reduce((prev, guild) => prev + guild.memberCount, 0))}**`
         ];
-        
+
         if (sendType === "embed") {
             let inviteURL = `https://discord.com/oauth2/authorize/?client_id=${this.client.user
                 .id}&permissions=379968&scope=bot`;
@@ -92,7 +92,7 @@ module.exports = class extends Command {
             },
             {
                 message: "The help command is the tree of knowledge for every category and command. It's your best " +
-                "friend.\n\nMission: Check all the commands within the `Tool` category. Remember, to search a " +
+                "friend.\n\nMission: Check all the commands within the `Tools` category. Remember, to search a " +
                 `category, type \`${message.prefix}help <category>\``,
                 answers: [`${message.prefix}help tools`.toLowerCase()]
             },
@@ -153,7 +153,7 @@ module.exports = class extends Command {
                 if (canSend()) {
                     await message.channel.createMessage("The interactive lesson has timed out due to inactivity.");
                 }
-                
+
                 return;
             }
 
@@ -161,7 +161,7 @@ module.exports = class extends Command {
                 switch (msg.content.toLowerCase()) {
                     case "stop": {
                         await message.channel.createMessage("Stopped.");
-    
+
                         return;
                     }
 
