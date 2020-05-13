@@ -12,43 +12,24 @@ module.exports = class extends Subcommand {
             requiredArgs: 2
         });
     }
-  
+
+    /**
+     *
+     * @param message
+     * @param memberArg
+     * @param roleArgs
+     * @returns {Promise<Message>}
+     */
     async run(message, [memberArg, ...roleArgs]) {
-        let target = this.client.commands.get("role").findMember(message, [memberArg], { strict: true });
+        let target = this.command.findMember(message, [memberArg], { strict: true });
 
         if (!target) {
             return CommandError.ERR_NOT_FOUND(message, "member", memberArg);
         }
 
-        let rolesArray = message.channel.guild.roles.map((role) => role).sort((a, b) => {
-            let bName = b.name.toLowerCase();
-            let aName = a.name.toLowerCase();
-
-            if (bName < aName) {
-                return 1;
-            } else if (bName > aName) {
-                return -1;
-            }
-
-            return 0;
-        });
         let [roles, notFoundRoles] = Util.arrayPartition(roleArgs.join(" ").split(/, */).map((arg) => {
-            if (Util.isSnowflake(arg)) {
-                let maybeRole = message.channel.guild.roles.get(arg);
-
-                if (maybeRole) {
-                    return maybeRole;
-                }
-            }
-
-            arg = arg.toLowerCase();
-
-            return rolesArray.find((role) => {
-                let roleName = role.name.toLowerCase();
-
-                return roleName === arg || roleName.includes(arg);
-            }) || arg;
-        }), (roleOrID) => typeof roleOrID !== "string");
+            return this.command.findRole(message, [arg], { strict: true }) || arg;
+        }), (role) => typeof role !== "string");
 
         if (roles.length) {
             let clientMember = await Util.guildMe(this.client, message.channel.guild);
@@ -106,12 +87,7 @@ module.exports = class extends Subcommand {
                 return message.channel.createMessage(content);
             }
 
-            let content = "I could not add any of the listed roles.\n```diff\n" + Object.keys(roleList.disallowed)
-                .filter((type) => roleList.disallowed[type].length)
-                .map((type) => `- ${types[type]}\n${roleList.disallowed[type].map((role) => role.name).join(", ")}`)
-                .join("\n\n") + "```";
-
-            return message.channel.createMessage(content);
+            return this.command.onRolesNotFound(message, roleList.disallowed, types);
         }
 
         return CommandError.ERR_NOT_FOUND(message, "roles", notFoundRoles.join("\", \""));
