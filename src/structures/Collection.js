@@ -1,28 +1,28 @@
 "use strict";
 
 /**
- * Repreesnts a Collection.
+ * Represents a Collection.
  * @extends {Map}
  */
 class Collection extends Map {
     /**
-     * Run a filter over all items returning values passing the function.
+     * Runs a filter over all items returning values passing the function.
      * @param {Function} fn The function to run over each item. The function receives the item, index, and its `this`
      * value.
      * @returns {Collection} The new collection with items passing the function.
      */
     filter(fn) {
         let list = new this.constructor();
-      
+
         for (const [key, value] of this.entries()) {
             if (fn(value, key, this)) {
                 list.set(key, value);
             }
         }
-      
+
         return list;
     }
-  
+
     /**
      * Returns an array of values returned from running a function over each item.
      * @param {Function} fn The function to run over each item. The function receives the item, index and its `this`
@@ -31,18 +31,18 @@ class Collection extends Map {
      */
     map(fn) {
         let arr = [];
-            
+
         for (const [key, value] of this.entries()) {
             arr.push(fn(value, key, this));
         }
-            
+
         return arr;
     }
-  
+
     /**
      * Find an item in the collection.
-     * @param {Function} fn The function to try finding an item from. The function must return a truthly value to return
-     * as the value from the method. The function receives the item, index and its `this` value.
+     * @param {Function} fn The function to try finding an item from. The function must return a truthfully value to
+     * return as the value from the method. The function receives the item, index and its `this` value.
      * @returns {any} The item receives from the function, or `undefined` if nothing was found.
      */
     find(fn) {
@@ -52,7 +52,7 @@ class Collection extends Map {
             }
         }
     }
-  
+
     /**
      * Check if every item in the collection passes the function.
      * @param {Function} fn The function to run over each item.
@@ -62,7 +62,7 @@ class Collection extends Map {
     every(fn) {
         return !!this.find((item, key) => fn(item, key, this));
     }
-  
+
     /**
      * Check if a single item from the collection passes the function.
      * @param {Function} fn The function to run over each item.
@@ -75,10 +75,10 @@ class Collection extends Map {
                 return true;
             }
         }
-      
+
         return false;
     }
-  
+
     /**
      * Get a random item from the collection.
      * @returns {any} An item from the collection.
