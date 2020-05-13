@@ -3,31 +3,19 @@
 const EventEmitter = require("events");
 
 /**
- * @typedef {import("../Client.js")} Client
- * @typedef {import("eris").Message} Message
+ * @typedef {import("../Rin.js")} Client
  */
 /**
- * Represents a message collector.
- * @property {Client} client The client instance.
- * @property {Function} filter The filter to run on each message.
- * @property {Boolean} ended Whether the message collector has ended or not.
- * @property {Array<Message>} collected An array of messages passing the filter.
- * @property {{
-        channelID?: String,
-        time?: Number,
-        maxMatches?: Number,
-        restartTimerOnCollection?: Boolean
-    }} options The options.
- 
+ * Represents a collector for watching new messages.
+ * @extends {EventEmitter}
  */
 class MessageCollector extends EventEmitter {
     /**
-     * Initializes the message collector.
      * @param {Client} client The client instance.
      * @param {Function} filter The function to run on each message.
      * @param {Object} options The options for the collector.
      * @param {String} [options.channelID] The channel to restrict the message collector to.
-     * @param {Number} [options.time=Infinity] The maximum time for the collectot to run in ms.
+     * @param {Number} [options.time=Infinity] The maximum time for the collector to run in ms.
      * @param {Number} [options.maxMatches=Infinity] The maximum amount of messages to collect.
      * @param {Boolean} [options.restartTimerOnCollection=false] Whether to restart the timer upon
      * a message being collected or not.
@@ -35,10 +23,44 @@ class MessageCollector extends EventEmitter {
     constructor(client, filter, options) {
         super();
 
+        /**
+         * The client instance.
+         * @type {Client}
+         */
         this.client = client;
+
+        /**
+         * The filter to run on each message.
+         * @type {Function}
+         */
         this.filter = filter;
+
+        /**
+         * Whether or not the collection has ended.
+         * @type {Boolean}
+         */
         this.ended = false;
+
+        /**
+         * An array of collected messages.
+         * @type {Array<Eris.Message>}
+         */
         this.collected = [];
+
+        /**
+         * The options for the collector.
+         * @typedef {Object} CollectorOptionsData
+         * @property {String} [channelID=null] The channel to limit the collection to.
+         * @property {Number} [time=Infinity] How long to run the collector for.
+         * @property {Number} [maxMatches=Infinity] How many items the collector is allowed to hold.
+         * @property {Boolean} [restartTimerOnCollection=false] Whether or not to restart the timer when a new item
+         * is added to the collection.
+         */
+
+        /**
+         * An object representing the options for the collection.
+         * @type {CollectorOptionsData}
+         */
         this.options = Object.assign({
             channelID: null,
             time: Infinity,
@@ -46,14 +68,19 @@ class MessageCollector extends EventEmitter {
             restartTimerOnCollection: false
         }, options);
 
+        /**
+         * The timer for when the collector hits its time limit.
+         * @type {?NodeJS.Timeout}
+         * @private
+         */
         this._timeout = options.time ? setTimeout(() => this.stop("time"), options.time) : null;
 
         this.client.messageMonitors.add(this);
     }
 
     /**
-     * 
-     * @param {Message} message The message instance.
+     * Runs the filter on a new message and emits events.
+     * @param {Eris.Message} message The message instance.
      * @returns {Boolean} Whether or not the message passes the filter or not.
      */
     check(message) {
@@ -89,10 +116,10 @@ class MessageCollector extends EventEmitter {
     }
 
     /**
-     * Stops the reaction collector.
-     * @param {String} reason The reason.
-     * @returns {Boolean} Whether or not the reaction collector was stopped by this method call.
-     * `False` when the reaction collector already ended.
+     * Stops the message collector.
+     * @param {String} [reason=""] The reason.
+     * @returns {Boolean} Whether or not the reaction collector was stopped by this method call. `false` when the
+     * reaction collector already ended.
      */
     stop(reason = "") {
         if (this.ended) {
@@ -100,7 +127,7 @@ class MessageCollector extends EventEmitter {
         }
 
         if (this._timeout) {
-            clearTimeout(this._timeout);
+            global.clearTimeout(this._timeout);
         }
 
         this.ended = true;

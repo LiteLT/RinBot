@@ -5,33 +5,28 @@ const EventEmitter = require("events");
 const has = (obj, key) => Object.prototype.hasOwnProperty.call(obj, key);
 
 /**
- * @typedef {import("../Client.js")} Client
+ * @typedef {import("../Rin.js")} Client
  * @typedef {import("eris").Message} Message
  * @typedef {{ id?: String, name: String }} emoji
  * @typedef {"ADD" | "REMOVE" | "REMOVEALL"} reactionType
  */
 /**
- * Represents a reaction collector for awaiting reactions.
- * @property {Client} client The client instance.
- * @property {Function} filter The filter to run on each reaction.
- * @property {{
-        messageID?: String, 
-        time?: Number,
-        maxMatches?: Number,
-        restartTimerOnCollection?: Boolean,
-        allowedTypes?: Array<reactionType>
-    }} options The options.
- * @property {Boolean} ended Whether or not the collector has ended or not.
- * @property {{
-        message: Message,
-        emoji: emoji,
-        userID: String,
-        type: reactionType
-    }} collected The data collected from the reaction collector.
+ * @typedef {Object} EmojiData
+ * @property {?String} id The ID of the emoji.
+ * @property {String} name The name of the emoji.
+ */
+/**
+ * @typedef {Object} CollectedEmojiData
+ * @property {Eris.Message} message The message the reaction was added to.
+ * @property {EmojiData} emoji The emoji.
+ * @property {Eris.User.id} userID The ID of the user who added the reaction.
+ * @property {reactionType} type The type of reaction.
+ */
+/**
+ * Represents a collector for reactions.
  */
 class ReactionCollector extends EventEmitter {
     /**
-     * Initializes the reaction collector.
      * @param {Client} client The client instance.
      * @param {Function} filter The filter to run on each reaction.
      * @param {Object} options The options for the collector.
@@ -46,11 +41,47 @@ class ReactionCollector extends EventEmitter {
      */
     constructor(client, filter, options) {
         super();
-        
+
+        /**
+         * The client instance.
+         * @type {Client}
+         */
         this.client = client;
+
+        /**
+         * The filter to run on each message.
+         * @type {Function}
+         */
         this.filter = filter;
+
+        /**
+         * Whether or not the collection has ended.
+         * @type {Boolean}
+         */
         this.ended = false;
+
+        /**
+         * An array of collected messages.
+         * @type {Array<CollectedEmojiData>}
+         */
         this.collected = [];
+
+        /**
+         * The options for the collector.
+         * @typedef {Object} CollectorOptionsData
+         * @property {Number} [time=Infinity] How long to run the collector for.
+         * @property {Array<reactionType>} [allowedTypes=["ADD", "REMOVE", "REMOVEALL"]] The type
+         * of reactions to listen for.
+         * @property {String} [messageID=null] The message to limit the collection to.
+         * @property {Number} [maxMatches=Infinity] How many items the collector is allowed to hold.
+         * @property {Boolean} [restartTimerOnCollection=false] Whether or not to restart the timer when a new item
+         * is added to the collection.
+         */
+
+        /**
+         * An object representing the options for the collection.
+         * @type {CollectorOptionsData}
+         */
         this.options = Object.assign({
             time: Infinity,
             allowedTypes: ["ADD", "REMOVE", "REMOVEALL"],
@@ -59,6 +90,11 @@ class ReactionCollector extends EventEmitter {
             restartTimerOnCollection: false
         }, options);
 
+        /**
+         * The timer for when the collector hits its time limit.
+         * @type {?NodeJS.Timeout}
+         * @private
+         */
         this._timeout = options.time ? setTimeout(() => this.stop("time"), options.time) : null;
 
         this.client.reactionMonitors.add(this);
@@ -66,9 +102,9 @@ class ReactionCollector extends EventEmitter {
 
     /**
      * Checks if the reaction passes the filter.
-     * @param {Message} message The message instance.
-     * @param {{ id?: String, name: String }} emoji The emoji object.
-     * @param {String} userID The ID of the user who added the reaction.
+     * @param {Eris.Message} message The message instance.
+     * @param {EmojiData} emoji The emoji object.
+     * @param {Eris.User.id} userID The ID of the user who added the reaction.
      * @param {reactionType} type The reaction type.
      * @returns {Boolean} Whether or not the reaction passed the filter.
      * An event is fired when a reaction passes or fails the filter.
@@ -96,7 +132,7 @@ class ReactionCollector extends EventEmitter {
         if (this.filter(message, emoji, userID, type)) {
             this.collected.push({ message, emoji, userID, type });
             passed(message, emoji, userID, type);
-            
+
             if (this.collected.length >= this.options.maxMatches) {
                 this.stop("maxMatches");
             }
@@ -118,8 +154,8 @@ class ReactionCollector extends EventEmitter {
     /**
      * Stops the reaction collector.
      * @param {String} reason The reason.
-     * @returns {Boolean} Whether or not the reaction collector was stopped by this method call.
-     * `False` when the reaction collector already ended.
+     * @returns {Boolean} Whether or not the reaction collector was stopped by this method call. `false` when the
+     * reaction collector already ended.
      */
     stop(reason = "") {
         if (this.ended) {
@@ -127,7 +163,7 @@ class ReactionCollector extends EventEmitter {
         }
 
         if (this._timeout) {
-            clearTimeout(this._timeout);
+            global.clearTimeout(this._timeout);
         }
 
         this.ended = true;
