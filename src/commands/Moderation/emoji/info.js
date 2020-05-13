@@ -11,9 +11,9 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, [emojiArg]) {
-        let emoji = this.client.commands.get("emoji").findEmoji(message.channel.guild, emojiArg);
+        let emoji = this.command.findEmoji(message.channel.guild, emojiArg);
 
         if (emoji) {
             let flags = Util.messageFlags(message, this.client);
