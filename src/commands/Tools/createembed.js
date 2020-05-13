@@ -5,7 +5,7 @@ const { Util, Command } = require("../../index.js");
 module.exports = class extends Command {
     constructor(...args) {
         super(...args, {
-            usage: "<embed|...flags>",
+            usage: "<embed>",
             description: "Creates and sends a custom embed.",
             fullDescription: "To send your own custom embed, you'll need to use an online Discord embed generator " +
             "and paste the contents as the command arguments. What you'll be pasting is what you find at the bottom " +
