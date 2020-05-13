@@ -31,7 +31,7 @@ module.exports = class extends Command {
 
         const output = (term, sendType, pageNumber) => {
             let ratio = term.thumbs_up / term.thumbs_down;
-            const urbanDefinition = (def) => def.replace(/\[([^\]]+)\]/g, (_, word) => {
+            const urbanDefinition = (def) => def.replace(/\[([^\]]+)]/g, (_str, word) => {
                 return sendType === "embed"
                     ? `[${word}](${baseURL + encodeURIComponent(word)})`
                     : word;
@@ -98,11 +98,10 @@ module.exports = class extends Command {
             } catch (ex) {
                 if (ex.code === 10008 || ex.code === 30010 ||
                     ex.code === 50013 || ex.code === 90001) {
-                    if (Util.hasChannelPermission(msg.channel, this.client
-                        .user, "manageMessages")) {
+                    if (message.channel.permissionsOf(this.client.user.id).has("manageMessages")) {
                         msg.removeReactions().catch(() => {});
                     }
-                  
+
                     return;
                 }
             }
@@ -121,7 +120,7 @@ module.exports = class extends Command {
             collector.on("reactionAdd", async (msg, emoji, userID) => {
                 if (message.channel.guild &&
                     message.channel.permissionsOf(this.client.user.id).has("manageMessages")) {
-                    msg.removeReaction(emoji.name, userID);
+                    await msg.removeReaction(emoji.name, userID);
                 }
 
                 if (isAwaitingResponse) {
@@ -133,29 +132,29 @@ module.exports = class extends Command {
                         if (pageNumber === 1) {
                             return;
                         }
-                      
+
                         pageNumber = 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_BACKWARDS: {
                         if (pageNumber === 1) {
                             return;
                         }
-                        
+
                         pageNumber -= 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_FORWARD: {
                         if (pageNumber === definitions.length) {
                             return;
                         }
-                      
+
                         pageNumber += 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.TRACK_NEXT: {
                         if (pageNumber === definitions.length) {
                             return;
@@ -164,7 +163,7 @@ module.exports = class extends Command {
                         pageNumber = definitions.length;
                         break;
                     }
-                    
+
                     case Constants.Emojis.STOP_BUTTON: {
                         return collector.stop("stop");
                     }
@@ -192,7 +191,7 @@ module.exports = class extends Command {
                         pageNumber = newPage;
                         break;
                     }
-                    
+
                     default: {
                         return;
                     }
