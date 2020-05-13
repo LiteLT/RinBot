@@ -21,7 +21,7 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
         let flags = Util.messageFlags(message, this.client);
         let input = flags.player ? args[0].replace(/-/g, "") : args.join(" ");
@@ -29,7 +29,7 @@ module.exports = class extends Subcommand {
             .LOADING} Loading (this may take a while)...`);
         let guildData = await this._request(input, flags.player ? "PLAYER" : "GUILD")
             .catch((err) => err);
-        
+
         if (guildData instanceof Error) {
             switch (guildData.code) {
                 case 404: {
@@ -78,7 +78,7 @@ module.exports = class extends Subcommand {
             switch (guildData.cause) {
                 case "Invalid API key": {
                     return msg.edit("There seems to be no API key present. " +
-                    "Please join the support server and contct a staff member.");
+                    "Please join the support server and contact a staff member.");
                 }
 
                 default: {
@@ -94,6 +94,14 @@ module.exports = class extends Subcommand {
         return this.result(message, flags, guildData, msg);
     }
 
+    /**
+     * Sends the result of the command to the user.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {Object<String, String>} flags An object of command flags.
+     * @param {Object<String, Object>} guild The Hypixel guild data.
+     * @param {Eris.Message} msg The loading message to be edited.
+     * @return {Promise<void>}
+     */
     async result(message, flags, guild, msg) {
         const { ENABLED: onEmoji, DISABLED: offEmoji } = Constants.CustomEmojis;
         let sendType = this.sendType(message, flags);
@@ -120,8 +128,8 @@ module.exports = class extends Subcommand {
                                 ? `Legacy Rank: **${Util.commaify(guild.legacy_ranking)}**`
                                 : null,
                             `Member Count: **${guild.members.length}**`,
-                            `Guild Master: [${guildMaster.username}](${Endpoints
-                                .PLANCKE_PLAYER(guildMaster.uuid)})`,
+                            `Guild Master: ${guildMaster ? `[${guildMaster.username}](${Endpoints
+                                .PLANCKE_PLAYER(guildMaster.uuid)})` : "**???**"}`,
                             "",
                             `${guild.public ? onEmoji : offEmoji} Public.`,
                             `${guild.joinable ? onEmoji : offEmoji} Joinable.`
@@ -138,7 +146,7 @@ module.exports = class extends Subcommand {
                     ? `Legacy Rank: **${Util.commaify(guild.legacy_ranking)}**`
                     : null,
                 `Member Count: **${guild.members.length}**`,
-                `Guild Master: **${guildMaster.username}**`,
+                `Guild Master: **${guildMaster?.username || "???"}**`,
                 `Creation Date: **${dateformat(guild.created, "mmmm dS, yyyy")}**`
             ].filter((prop) => prop !== null).map((str) => `${bulletChar} ${str}`)
                 .join("\n") + "\n\n" + [
@@ -149,7 +157,7 @@ module.exports = class extends Subcommand {
             msg = await msg.edit(content);
         }
 
-        if (Util.hasChannelPermission(msg.channel, this.client.user, "addReactions") &&
+        if (message.channel.permissionsOf(this.client.user.id).has("addReactions") &&
             (guild.members.length > 1 || Object.values(guild.exp_by_game).length)) {
             let emojis = [
                 Constants.Emojis.TRACK_PREVIOUS,
@@ -168,11 +176,10 @@ module.exports = class extends Subcommand {
             } catch (ex) {
                 if (ex.code === 10008 || ex.code === 30010 ||
                     ex.code === 50013 || ex.code === 90001) {
-                    if (Util.hasChannelPermission(msg.channel, this.client
-                        .user, "manageMessages")) {
+                    if (message.channel.permissionsOf(this.client.user.id).has("manageMessages")) {
                         msg.removeReactions().catch(() => {});
                     }
-                  
+
                     return;
                 }
             }
@@ -200,8 +207,8 @@ module.exports = class extends Subcommand {
                                         ? `Legacy Rank: **${Util.commaify(guild.legacy_ranking)}**`
                                         : null,
                                     `Member Count: **${guild.members.length}**`,
-                                    `Guild Master: [${guildMaster.username}](${Endpoints
-                                        .PLANCKE_PLAYER(guildMaster.uuid)})`,
+                                    `Guild Master: ${guildMaster ? `[${guildMaster.username}](${Endpoints
+                                        .PLANCKE_PLAYER(guildMaster.uuid)})` : "**???**"}`,
                                     "",
                                     `${guild.public ? onEmoji : offEmoji} Public.`,
                                     `${guild.joinable ? onEmoji : offEmoji} Joinable.`
@@ -219,16 +226,14 @@ module.exports = class extends Subcommand {
 
                         return `**${embedTemplate.title}**\n` +
                         guild.description.replace(/https?:\/\/[^ ]+/g, (str) => `<${str}>`) +
-                        "\n\n" + [
+                            "\n\n" + [
                             `Page: **${pageNum}**/**${pageLayouts.length}**`,
                             `Level: **${guild.level}**`,
                             guild.legacy_ranking
                                 ? `Legacy Rank: **${Util.commaify(guild.legacy_ranking)}**`
                                 : null,
                             `Member Count: **${guild.members.length}**`,
-                            `Guild Master: **${guild.members
-                                .find((member) => member.rank === "Guild Master").profile
-                                .username}**`,
+                            `Guild Master: **${guildMaster?.username || "???"}**`,
                             `Creation Date: **${dateformat(guild.created, "mmmm dS, yyyy")}**`
                         ].filter((prop) => prop !== null).map((str) => `${bulletChar} ${str}`)
                             .join("\n") + "\n\n" + [
@@ -243,11 +248,13 @@ module.exports = class extends Subcommand {
                         embed: {
                             ...embedTemplate,
                             title: `${embedTemplate.title} > Members (${guild.members.length})`,
+                            description: guildMaster ? null : "Unable to fetch guild members at this time. Try again " +
+                                "later.",
                             footer: {
                                 text: `Page ${pageNum}/${pageLayouts.length} | ${embedTemplate
                                     .footer.text}`
                             },
-                            fields: Util.arrayUnique(guild.members.map((member) => member.rank))
+                            fields: guildMaster ? Util.arrayUnique(guild.members.map((member) => member.rank))
                                 .map((guildRank) => {
                                     let rank = guild.ranks.find((rank) => rank.name === guildRank);
 
@@ -270,7 +277,7 @@ module.exports = class extends Subcommand {
 
                                         return prefix + members;
                                     })()
-                                }))
+                                })) : null
                         }
                     },
                     plain: (() => {
@@ -330,7 +337,7 @@ module.exports = class extends Subcommand {
                                             Arcade: "Arcade",
                                             Arena: "Arena",
                                             UHC: "UHC Champions",
-                                            CvC: "Cops and Crims",
+                                            CvC: "Cops and Criminals",
                                             Warlords: "Warlords",
                                             Smash: "Smash Heroes",
                                             TKR: "Turbo Kart Racers",
@@ -382,9 +389,8 @@ module.exports = class extends Subcommand {
             });
 
             collector.on("reactionAdd", async (msg, emoji, userID) => {
-                if (message.channel.guild &&
-                    message.channel.permissionsOf(this.client.user.id).has("manageMessages")) {
-                    msg.removeReaction(emoji.name, userID);
+                if (message.channel.permissionsOf?.(this.client.user.id).has("manageMessages")) {
+                    await msg.removeReaction(emoji.name, userID);
                 }
 
                 if (isAwaitingResponse) {
@@ -396,29 +402,29 @@ module.exports = class extends Subcommand {
                         if (pageNumber === 1) {
                             return;
                         }
-                      
+
                         pageNumber = 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_BACKWARDS: {
                         if (pageNumber === 1) {
                             return;
                         }
-                        
+
                         pageNumber -= 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.ARROW_FORWARD: {
                         if (pageNumber === pageLayouts.length) {
                             return;
                         }
-                      
+
                         pageNumber += 1;
                         break;
                     }
-                    
+
                     case Constants.Emojis.TRACK_NEXT: {
                         if (pageNumber === pageLayouts.length) {
                             return;
@@ -427,7 +433,7 @@ module.exports = class extends Subcommand {
                         pageNumber = pageLayouts.length;
                         break;
                     }
-                    
+
                     case Constants.Emojis.STOP_BUTTON: {
                         return collector.stop("stop");
                     }
@@ -455,7 +461,7 @@ module.exports = class extends Subcommand {
                         pageNumber = newPage;
                         break;
                     }
-                    
+
                     default: {
                         return;
                     }
@@ -511,8 +517,8 @@ module.exports = class extends Subcommand {
             .permissionsOf(this.client.user.id).has("embedLinks"))) {
             return "embed";
         }
-        
-        
+
+
         return "plain";
     }
 
