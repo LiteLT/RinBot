@@ -3,7 +3,6 @@
 const { Util, Command, Constants, CommandError } = require("../../index.js");
 const { User: ErisUser } = require("eris");
 const dateformat = require("dateformat");
-const ms = require("ms");
 
 module.exports = class extends Command {
     constructor(...args) {
@@ -57,11 +56,11 @@ module.exports = class extends Command {
         let { ENABLED: onEmoji, DISABLED: offEmoji } = Constants.CustomEmojis;
         let sendType = this.sendType(message, flags, target instanceof ErisUser);
         let bulletChar = "»";
-        
+
         if (sendType === "member-embed" || sendType === "member-plain") {
             let status = Util.toTitleCase(target.status.replace("dnd", "do not disturb"));
             let customStatus = target.activities.find((activity) => activity.type === 4);
-            let activityStatus = target.activities
+            let activityStatus = [...target.activities].reverse()
                 .find((activity) => [0, 1, 2, 3].includes(activity.type));
             let activityStatusType = null;
 
@@ -169,19 +168,16 @@ module.exports = class extends Command {
                                     customStatus
                                         ? `${onEmoji} Custom Status: **${customStatus.state}**`
                                         : `${offEmoji} Custom Status`,
-                                    
+
                                     activityStatus
-                                        ? `${onEmoji} ${activityStatusType}: **${activityStatus.type === 2
-                                            ? `${activityStatus.state || "?"} — ${activityStatus.details || "?"}`
-                                            : activityStatus.name}** (${activityStatus.assets.large_text})`
+                                        ? `${onEmoji} ${activityStatusType}: ${activityStatus.type === 2
+                                            ? `**${activityStatus.state || "?"} — ${activityStatus
+                                                .details || "?"}** ${activityStatus.assets
+                                                ? `(${activityStatus.assets.large_text})` : ""}`
+                                            : `**${activityStatus.name}** ${activityStatus.details
+                                                ? `(${activityStatus.details})`
+                                                : ""}`}`
                                         : `${offEmoji} Activity Status`
-                                    // activityStatus
-                                    //     ? `${onEmoji} ${activityStatusType}: **${activityStatus.type === 2
-                                    //         ? activityStatus.details
-                                    //         : `${activityStatus.state || "?"} — ${activityStatus
-                                    //             .name || "?"}`}** (${ms(Date.now() - activityStatus
-                                    //         .created_at, { long: true })})`
-                                    //     : `${offEmoji} Activity Status`
                                 ].join("\n")
                             } : null,
                             target.roles.length ? {
@@ -218,27 +214,27 @@ module.exports = class extends Command {
                 target.nick ? `Nickname: ${target.nick}` : null,
                 `Status: ${Constants.CustomEmojis[status.toUpperCase()
                     .replace(/ /g, "_")]} ${status} ${target.voiceState.sessionID
-                    ? `(**${message.channel.guild.channels.get(target.voiceState
-                        .channelID).mention}**)`
+                    ? `(**${message.channel.guild.channels.get(target.voiceState.channelID).mention}**)`
                     : ""}`,
                 `Joined At: **${dateformat(target.joinedAt, "mmmm dS, yyyy")}**`,
                 `Account Registered: **${dateformat(target.createdAt, "mmmm dS, yyyy")}**`,
                 `User ID: \`${target.id}\``
             ].filter((prop) => prop !== null).map((str) => `${bulletChar} ${str}`)
                 .join("\n") + "\n\n" + [
-                target.activities.length ? [
-                    customStatus
-                        ? `${onEmoji} Custom Status: **${customStatus
-                            .state}**`
-                        : `${offEmoji} Custom Status`,
-                    
-                    activityStatus
-                        ? `${onEmoji} ${activityStatusType}: **${activityStatus
-                            .name}** (${ms(Date.now() - activityStatus
-                            .created_at, { long: true })})`
-                        : `${offEmoji} Activity Status`
-                ].join("\n") : null
-            ].filter((prop) => prop !== null).join("\n");
+                customStatus
+                    ? `${onEmoji} Custom Status: **${customStatus.state}**`
+                    : `${offEmoji} Custom Status`,
+
+                activityStatus
+                    ? `${onEmoji} ${activityStatusType}: ${activityStatus.type === 2
+                        ? `**${activityStatus.state || "?"} — ${activityStatus.details || "?"}** ${activityStatus.assets
+                            ? `(${activityStatus.assets.large_text})`
+                            : ""}`
+                        : `**${activityStatus.name}** ${activityStatus.details
+                            ? `(${activityStatus.details})`
+                            : ""}`}`
+                    : `${offEmoji} Activity Status`
+            ].join("\n");
 
             return message.channel.createMessage(content);
         } else if (sendType === "user-embed" || sendType === "user-plain") {
