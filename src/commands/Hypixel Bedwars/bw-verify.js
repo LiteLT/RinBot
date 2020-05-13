@@ -25,4 +25,13 @@ module.exports = class extends Command {
             }]
         });
     }
+
+    /**
+     * Runs the command.
+     * @param {Eris.Message} message The message the command was called on.
+     * @param {Array<String>} args Arguments passed to the command.
+     */
+    async run(message, args) {
+
+    }
 };
