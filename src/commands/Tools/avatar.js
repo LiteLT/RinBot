@@ -99,7 +99,7 @@ module.exports = class extends Command {
     }
 
     sendType(message, flags) {
-        let sendType = null;
+        let sendType;
 
         if (flags.noembed) {
             sendType = "attach";
