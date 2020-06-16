@@ -211,6 +211,8 @@ class Command {
                     invalidate(`You are being rate limited. Try again in **${((time - Date.now()) / 1000)
                         .toFixed(1)}** seconds.`);
                 }
+
+                return null;
             } else {
                 this.ratelimits.set(message.author.id, Date.now() + this.cooldown * 1000);
                 setTimeout(() => this.ratelimits.delete(message.author.id), this.cooldown * 1000);
@@ -329,28 +331,28 @@ class Command {
 
         if (sendType === "embed") {
             if (subcommand) {
-                content = {
-                    embed: {
-                        color: Util.base10(Constants.Colors.DEFAULT),
-                        title: `${title} ${subcommand.name} ${subcommand.usage}`,
-                        description: subcommand.fullDescription || subcommand.description || "No description.",
-                        fields: []
-                    }
-                };
-            } else {
-                content = {
-                    embed: {
-                        title: `${title} ${this.usage}`,
-                        color: Util.base10(Constants.Colors.DEFAULT),
-                        description: this.fullDescription || this.description || "No description.",
-                        fields: []
-                    }
-                };
+                            content = {
+                                embed: {
+                                    color: Util.base10(Constants.Colors.DEFAULT),
+                                    title: `${title} ${subcommand.name} ${subcommand.usage}`,
+                                    description: subcommand.fullDescription || subcommand.description || "No description.",
+                                    fields: []
+                                }
+                            };
+                        } else {
+                            content = {
+                                embed: {
+                                    title: `${title} ${this.usage}`,
+                                    color: Util.base10(Constants.Colors.DEFAULT),
+                                    description: this.fullDescription || this.description || "No description.",
+                                    fields: []
+                                }
+                            };
 
-                if (this.flags.length) {
-                    content.embed.fields.push({
-                        name: "Flags",
-                        value: this.flags.map((flag) => {
+                            if (this.flags.length) {
+                        content.embed.fields.push({
+                            name: "Flags",
+                            value: this.flags.map((flag) => {
                             return `${Constants.Emojis.WHITE_MEDIUM_SQUARE} \`--${flag.name}${flag.value
                                 ? `=${flag.value}`
                                 : ""}\` ${flag.description}`;
@@ -721,21 +723,17 @@ class Command {
                             fields: [{
                                 name: "Metadata",
                                 value: [
-                                    `**User**: ${Util.userTag(message.author)} (${message
-                                        .author.id})`,
+                                    `**User**: ${Util.userTag(message.author)} (${message.author.id})`,
                                     `**Guild**: ${message.channel.guild
-                                        ? `${message.channel.guild.name} (${message.channel
-                                            .guild.id})`
+                                        ? `${message.channel.guild.name} (${message.channel.guild.id})`
                                         : `Direct Message (${message.channel.id})`}`,
-                                    `**Command**: ${this.name} (\`src/commands/${this
-                                        .category}/${this.name}.js\`)`,
+                                    `**Command**: ${this.name} (\`src/commands/${this.category.name}/${this
+                                        .name}.js\`)`,
                                     subcommand
-                                        // eslint-disable-next-line max-len
-                                        ? `**Subcommand**: ${subcommand.name} (\`src/commands/${this
-                                            .category}/${this.name}/${subcommand.name}.js\`)`
+                                        ? `**Subcommand**: ${subcommand.name} (\`src/commands/${this.category
+                                            .name}/${this.name}/${subcommand.name}.js\`)`
                                         : null,
-                                    `**Time**: ${dateformat(Date
-                                        .now(), "mmmm d, yyyy @ h:MM:ss TT Z")}`
+                                    `**Time**: ${dateformat(Date.now(), "mmmm d, yyyy @ h:MM:ss TT Z")}`
                                 ].filter((value) => value !== null).join("\n")
                             }]
                         }
@@ -758,9 +756,8 @@ class Command {
                 return message.channel.createMessage("I do not have permission to perform this " +
                 `action (code: ${code}).`);
             } else if (code >= 500 && code < 600) {
-                return message.channel.createMessage("There seems to be an issue with the API " +
-                `(code: ${code}). Try again later or join the support server if this message ` +
-                "consists.");
+                return message.channel.createMessage(`There seems to be an issue with the API (code: ${code}). Try ` +
+                "again?");
             }
 
             // Discord errors, hopefully.

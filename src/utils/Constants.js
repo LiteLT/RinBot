@@ -8,10 +8,12 @@ module.exports = {
     BOT_OWNER: "345539839393005579",
     BOT_ID: "345539839393005579",
     BOT_PREFIXES: ["r."],
-    BOT_STAFF: ["345539839393005579"],
+    BOT_STAFF: ["345539839393005579", "683676435772473438"],
     BOT_DEVELOPERS: ["345539839393005579"],
     BOT_SUPPORT_SERVER_INVITE: "https://discord.gg/rpGQyb8",
     REPORT_EXCEPTION_CHANNEL_ID: "707760635722596462",
+
+    GUILD_HYPIXEL_BEDWARS: "384804710110199809",
 
     MAX_PUNISHMENT_REASON_LENGTH: 800,
 
@@ -39,7 +41,28 @@ module.exports = {
         KITSU: "F75239"
     },
 
+    CustomEmojis: {
+        BOOST: "<:boost:633034592797982740>",
+        BOT: "<:bot:633129812441038869>",
+        CHECKMARK: "<:checkmark:619130247677214750>",
+        DISABLED: "<:disabled:690594952920563712>",
+        DISCORD_LOGO: "<:discordLogo:698306239230378075>",
+        DO_NOT_DISTURB: "<:dnd:631479017735979018>",
+        ENABLED: "<:enabled:684609842689605741>",
+        GUILD_OWNER: "<:owner:633132002245083146>",
+        HYPIXEL_ONLINE: "<:hypixelOnline:698268072267481169>",
+        HYPIXEL_OFFLINE: "<:hypixelOffline:698268125057122404>",
+        IDLE: "<:idle:631479017714876456>",
+        LOADING: "<a:loading:698942515335659621>",
+        OFFLINE: "<:offline:631479017723133972>",
+        ONLINE: "<:online:631479018859921438>",
+        OUTAGE: "<:outage:688767864240340994>",
+        STAFF: "<:botstaff:633351245645611018>",
+        SYSTEM: "<:system:697528841891086400>"
+    },
+
     Emojis: {
+        X_EMOJI: "❌",
         ARROW_BACKWARDS: "◀️",
         ARROW_FORWARD: "▶️",
         BLUE_CHECK: "☑️",
@@ -62,9 +85,11 @@ module.exports = {
         FLAG_UNITED_STATES: "🇺🇸",
         FRAME_PHOTO: "🖼️",
         HEART: "❤️",
+        INPUT_TRAY: "📥",
         LARGE_ORANGE_DIAMOND: "🔶",
         LOCK: "🔒",
         ONE_TWO_THREE_FOUR: "🔢",
+        OUTPUT_TRAY: "📤",
         PAPER_PENCIL: "📝",
         PHONE: "📱",
         STAR: "⭐",
@@ -79,25 +104,5 @@ module.exports = {
         WHITE_MEDIUM_SQUARE: "◻️",
         WOMAN_TIPPING_HAND: "💁‍♀️",
         ZIPPER_MOUTH: "🤐"
-    },
-
-    CustomEmojis: {
-        BOOST: "<:boost:633034592797982740>",
-        BOT: "<:bot:633129812441038869>",
-        CHECKMARK: "<:checkmark:619130247677214750>",
-        DISABLED: "<:disabled:690594952920563712>",
-        DISCORD_LOGO: "<:discordLogo:698306239230378075>",
-        DO_NOT_DISTURB: "<:dnd:631479017735979018>",
-        ENABLED: "<:enabled:684609842689605741>",
-        GUILD_OWNER: "<:owner:633132002245083146>",
-        HYPIXEL_ONLINE: "<:hypixelOnline:698268072267481169>",
-        HYPIXEL_OFFLINE: "<:hypixelOffline:698268125057122404>",
-        IDLE: "<:idle:631479017714876456>",
-        LOADING: "<a:loading:698942515335659621>",
-        OFFLINE: "<:offline:631479017723133972>",
-        ONLINE: "<:online:631479018859921438>",
-        OUTAGE: "<:outage:688767864240340994>",
-        STAFF: "<:staff:633351245645611018>",
-        SYSTEM: "<:system:697528841891086400>"
     }
 };

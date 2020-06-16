@@ -51,7 +51,7 @@ module.exports = class extends Command {
             return this._reloadCategory(message, category);
         }
 
-        return CommandError.ERR_NOT_FOUND(message, "command or category", arg);
+        return CommandError.ERR_NOT_FOUND(message, "command or category", args.join(" "));
     }
 
     _reloadAll(message) {

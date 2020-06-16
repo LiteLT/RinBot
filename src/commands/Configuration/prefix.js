@@ -23,9 +23,9 @@ module.exports = class extends Command {
     async query(guildID, props = "*") {
         let prefixData = await this.client.db.all(`SELECT ${props} FROM prefixes WHERE guildID = ?`, [
             guildID
-        ]) || null;
+        ]);
 
-        if (prefixData) {
+        if (prefixData.length) {
             prefixData.prefixes = prefixData.prefixes.split(",").map((str) => str.replace(/%2C/g, ","));
         }
 

@@ -62,6 +62,8 @@ module.exports = class extends Command {
 
         if (hexColor === "0") { // hexToRGB breaks if it's not a 6-digit number.
             hexColor = "000000";
+        } else if (hexColor.length !== 3 || hexColor.length !== 6) {
+            hexColor = hexColor.padStart(6, "0");
         }
 
         if (sendType === "embed") {
@@ -148,9 +150,9 @@ module.exports = class extends Command {
     hexToRGB(hex) {
         let shorthandRegex = /^([a-f\d])([a-f\d])([a-f\d])$/i;
         hex = hex.replace(shorthandRegex, (txt, rr, gg, bb) => rr + rr + gg + gg + bb + bb);
-      
+
         let result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      
+
         return [
             parseInt(result[1], 16),
             parseInt(result[2], 16),

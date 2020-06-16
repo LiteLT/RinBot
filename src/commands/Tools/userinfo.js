@@ -58,10 +58,10 @@ module.exports = class extends Command {
         let bulletChar = "»";
 
         if (sendType === "member-embed" || sendType === "member-plain") {
-            let status = Util.toTitleCase(target.status.replace("dnd", "do not disturb"));
-            let customStatus = target.activities.find((activity) => activity.type === 4);
-            let activityStatus = [...target.activities].reverse()
-                .find((activity) => [0, 1, 2, 3].includes(activity.type));
+            let status = target.status ? Util.toTitleCase(target.status .replace("dnd", "do not disturb")) : null;
+            let customStatus = target.activities?.find((activity) => activity.type === 4);
+            let activityStatus = target.activities ? [...target.activities].reverse()
+                .find((activity) => [0, 1, 2, 3].includes(activity.type)) : null;
             let activityStatusType = null;
 
             if (activityStatus) {
@@ -154,15 +154,15 @@ module.exports = class extends Command {
                                 value: dateformat(target.joinedAt, "mmmm dS, yyyy"),
                                 inline: true
                             },
-                            {
+                            status ? {
                                 name: "Status",
                                 value: `${Constants.CustomEmojis[status.toUpperCase()
                                     .replace(/ /g, "_")]} ${status} ${target.voiceState.sessionID
                                     ? `(**${message.channel.guild.channels.get(target.voiceState.channelID).mention}**)`
                                     : ""}`,
                                 inline: true
-                            },
-                            target.activities.length ? {
+                            } : null,
+                            {
                                 name: "Activity",
                                 value: [
                                     customStatus
@@ -179,7 +179,7 @@ module.exports = class extends Command {
                                                 : ""}`}`
                                         : `${offEmoji} Activity Status`
                                 ].join("\n")
-                            } : null,
+                            },
                             target.roles.length ? {
                                 name: "Roles",
                                 value: Util.arrayJoinLimit(target.roles
@@ -212,12 +212,12 @@ module.exports = class extends Command {
                     : null
             ].filter((prop) => prop !== null).join(" ") + "\n" + [
                 target.nick ? `Nickname: ${target.nick}` : null,
-                `Status: ${Constants.CustomEmojis[status.toUpperCase()
+                status ? `Status: ${Constants.CustomEmojis[status.toUpperCase()
                     .replace(/ /g, "_")]} ${status} ${target.voiceState.sessionID
-                    ? `(**${message.channel.guild.channels.get(target.voiceState.channelID).mention}**)`
-                    : ""}`,
+                        ? `(**${message.channel.guild.channels.get(target.voiceState.channelID).mention}**)`
+                        : ""}` : null,
                 `Joined At: **${dateformat(target.joinedAt, "mmmm dS, yyyy")}**`,
-                `Account Registered: **${dateformat(target.createdAt, "mmmm dS, yyyy")}**`,
+                `Account Created: **${dateformat(target.createdAt, "mmmm dS, yyyy")}**`,
                 `User ID: \`${target.id}\``
             ].filter((prop) => prop !== null).map((str) => `${bulletChar} ${str}`)
                 .join("\n") + "\n\n" + [

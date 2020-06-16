@@ -22,6 +22,32 @@ class Util {
     }
 
     /**
+     * Checks if the bot can manage the target member.
+     * @param {Eris.Member} member The member to check.
+     * @param {Client} client The bot.
+     * @return {Promise<Boolean>} Whether or not the member is manageable by the client member.
+     */
+    static async isManageable(member, client) {
+        let clientMember = await this.guildMe(client, member.guild);
+
+        if (member.id === member.guild.ownerID ||
+            member.id === clientMember.id ||
+            clientMember.id === member.guild.ownerID) {
+            return false;
+        }
+
+        if (clientMember.roles.length) {
+            if (member.roles.length) {
+                return Util.memberHighestRole(clientMember).position >= Util.memberHighestRole(member).position;
+            }
+        } else if (member.roles.length) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Adds commas to a number.
      * @param {Number} num The number.
      * @returns {String} The number with commas added where they're needed.
@@ -341,7 +367,7 @@ class Util {
      * fetch the member.
      * @param {Client} bot The client instance.
      * @param {Guild} guild The guild to search.
-     * @returns {Promise<Member>} The guild client member.
+     * @returns {Promise<Eris.Member>} The guild client member.
      */
     static guildMe(bot, guild) {
         let me = guild.members.get(bot.user.id);

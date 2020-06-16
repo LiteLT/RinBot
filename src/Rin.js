@@ -187,6 +187,7 @@ class Rin extends Client {
     async gracefulExit(code = 0) {
         this.commands.clear();
         this.aliases.clear();
+        this.removeAllListeners();
 
         if (this.ready) {
             this.disconnect({ reconnect: false }); // Why does this not return a promise?

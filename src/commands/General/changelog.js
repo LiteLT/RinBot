@@ -19,13 +19,6 @@ module.exports = class extends Command {
         // Note: only 5 results!!!
         let history = [
             {
-                date: "May 7th, 2020",
-                value: [
-                    "Removed the `Kitsu` command and its subcommands.",
-                    "Created a public GitHub repository (<https://github.com/Kinolite/RinBot>)."
-                ].map((str) => `- ${str}`).join("\n")
-            },
-            {
                 date: "May 8th, 2020",
                 value: [
                     "Added category descriptions in the help manual (`help <category>`)."
@@ -58,7 +51,24 @@ module.exports = class extends Command {
                 date: "May 13th, 2020",
                 value: [
                     "Created the `Hypixel BedWars` category.",
-                    "Created the `bw-verify` command."
+                    "Created the `bw-verify` command.",
+                    "Fixed an issue in the `roleinfo` command where it would throw an error on hex codes that were" +
+                    " not three or six digits long (`noneleft#5392`)."
+                ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "May 14th, 2020",
+                value: [
+                    "Fixed an issue in the `prefix` command where it would throw an error on guilds that did not set" +
+                    " up a custom prefix.",
+                    "Fixed an issue in the `hypixel/player` subcommand where `Level` would appear as NaN (Not a" +
+                    " Number) for players with no stats (such as a moderator in vanish).",
+                    "Added missing properties to the `hypixel/player` `--noembed` flag to replicate parts of the" +
+                    " embed version.",
+                    "Fixed an issue in the `userinfo` command where it would throw an error if you tried to look up" +
+                    " info on a member that was offline/not cached.",
+                    "Fixed an issue in the `hypixel/player` subcommand where it would return `Not Found` on some" +
+                    " social media pages."
                 ].map((str) => `- ${str}`).join("\n")
             }
         ];

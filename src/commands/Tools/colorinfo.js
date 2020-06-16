@@ -126,7 +126,7 @@ module.exports = class extends Command {
             return this._request(color.name, color.urlColor).then((colorData) => this.result(message, colorData));
         }
 
-        return CommandError.ERR_INVALID_ARG_TYPE(message, colorInput, "hex, RGB, HLS or CMYK color");
+        return CommandError.ERR_INVALID_ARG_TYPE(message, colorInput, "hex, RGB, HSLr or CMYK color");
     }
 
     /**

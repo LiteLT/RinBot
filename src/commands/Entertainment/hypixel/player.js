@@ -138,7 +138,7 @@ module.exports = class extends Subcommand {
                     fields: [
                         {
                             name: "Level",
-                            value: `\`${HypixelLeveling.getExactLevel(player.networkExp)
+                            value: `\`${(HypixelLeveling.getExactLevel(player.networkExp) || 0)
                                 .toFixed(2)}\``,
                             inline: true
                         },
@@ -194,13 +194,13 @@ module.exports = class extends Subcommand {
                                     } else if (mediaName === "TWITTER") {
                                         let twitter = socialMedia[mediaName];
 
-                                        if (/https?:\/\//.test(twitter)) {
+                                        if (!/https?:\/\//.test(twitter)) {
                                             socialMedia[mediaName] = `https://twitter.com/${twitter}`;
                                         }
                                     } else if (mediaName === "YOUTUBE") {
                                         let youtube = socialMedia[mediaName];
 
-                                        if (/https?:\/\//.test(youtube)) {
+                                        if (!/https?:\/\//.test(youtube)) {
                                             socialMedia[mediaName] = `https://www.youtube.com/user/${youtube}`;
                                         }
                                     }
@@ -228,6 +228,7 @@ module.exports = class extends Subcommand {
             });
         } else if (sendType === "plain") {
             let title = [
+                rank,
                 player.displayname,
                 guild && guild.tag ? `[${guild.tag.replace(/§[a-f0-9]/gi, "")}]` : null
             ].filter((prop) => prop !== null).join(" ");
@@ -235,12 +236,16 @@ module.exports = class extends Subcommand {
             let bulletChar = "»";
             let { ENABLED: onEmoji, DISABLED: offEmoji } = Constants.CustomEmojis;
             let content = `**${title}**\n` + [
-                `Rank: **${rank || "None"}**`,
+                `Level: **${(HypixelLeveling.getExactLevel(player.networkExp) || 0).toFixed(2)}**`,
+                `Karma: **${Util.commaify(player.karma || 0)}**`,
+                `Achievement Points: **${Util.commaify(player.achievementPoints || 0)}**`,
+                `Minecraft Version: **${player.mcVersionRp || "Unknown"}**`,
+                guild ? `Guild: **${guild.name}**` : null,
                 `Last Login: **${dateformat(player.lastLogin, "mmmm dS, yyyy")}** ${player.lastLogin
                     ? `(${ms(Date.now() - player.lastLogin, { long: true })} ago)`
                     : ""}`,
                 `First Login: **${dateformat(player.firstLogin, "mmmm dS, yyyy")}**`
-            ].map((str) => `${bulletChar} ${str}`).join("\n") + "\n\n" + [
+            ].filter((prop) => prop !== null).map((str) => `${bulletChar} ${str}`).join("\n") + "\n\n" + [
                 `${online ? `${onEmoji} Online` : `${offEmoji} Offline`}`
             ].join("\n");
 

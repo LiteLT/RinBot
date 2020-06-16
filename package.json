@@ -6,11 +6,11 @@
   "author": "Kinolite",
   "license": "MIT",
   "scripts": {
-    "start": "node --input-type=module --redirect-warnings=warnings.txt --report-uncaught-exception --title=RinBot --trace-deprecation --trace-warnings .",
+    "start": "node --input-type=module --redirect-warnings=warnings.txt --report-uncaught-exception --title=RinBot--trace-deprecation --trace-warnings .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "url": "https://github.com/Kinolite/RinBot"
+    "url": "https://github.com/LiteKE/RikoBot"
   },
   "dependencies": {
     "chalk": "^3.0.0",

@@ -138,9 +138,11 @@ module.exports = class extends Command {
         if (flags.noembed || !hasEmbeds) {
             let content = `__**Help Manual**__\n${description.join("\n")}\n\n` +
             Object.keys(commands).map((category) => {
-                return `**${category} — ${commands[category].length}**:\n\`${commands[category]
-                    .map((command) => command.name).join("`, `")}\``;
-            }).join("\n\n");
+                return commands[category].length
+                    ? `**${category} — ${commands[category].length}**:\n\`${commands[category]
+                        .map((command) => command.name).join("`, `")}\``
+                    : null;
+            }).filter((prop) => prop !== null).join("\n\n");
 
             return message.channel.createMessage(content);
         }
@@ -154,11 +156,11 @@ module.exports = class extends Command {
                     name: `${this.client.user.username} Help Manual`
                 },
                 fields: Object.keys(commands).map((category) => {
-                    return {
+                    return commands[category].length ? {
                         name: `${category} — ${commands[category].length}`,
                         value: commands[category].map((command) => `\`${command.name}\``).join(", ")
-                    };
-                })
+                    } : null;
+                }).filter((prop) => prop !== null)
             }
         });
     }

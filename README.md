@@ -1,4 +1,4 @@
-<img align="right" width="140" height="140" src="https://cdn.discordapp.com/avatars/663069544193064980/10173a8d51581f291b3b9f4ca29166cc.png?size=1024">
+<img align="right" width="140" height="140" src="https://cdn.discordapp.com/avatars/663069544193064980/10173a8d51581f291b3b9f4ca29166cc.png?size=1024" alt="Rin bot.">
 
 ## Rin
 A private Discord bot.
@@ -76,7 +76,7 @@ Keep in mind that I will not help you during the process. Any issues you run int
     - `BOT_SUPPORT_SERVER_INVITE` - The link to your support server.
     - `REPORT_EXCEPTION_CHANNEL_ID` - The channel where your bot will output any errors/exceptions thrown in the command. If Rin does throw an exception, it's unlikely I will help you resolve them.
     - `CustomEmojis` - An object of custom emojis. As there are so many emojis and you can't visually see them all, I can't help you retrieve all the images for each emoji. Use your discretion to figure out what each emoji would look like, or join the support server to get a basic grasp of what some may look like.
-7. Access the database file (`database.db`) and run the following SQL statements.
+7. Access the database file (`database.db`) and run the following SQL statements:
 
 <details>
   <summary>#7 - SQL Statements</summary>
@@ -133,8 +133,32 @@ CREATE TABLE guildOptions (
     modlogs TEXT
 )
   ```
-</details>
+  
+  ```sql
+CREATE TABLE bw_verified (
+    guildID TEXT,
+    userID TEXT,
+    minecraftUUID TEXT NOT NULL UNIQUE,
+    
+    createdTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    editedTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY(guildID, userID)
+)
+  ```
 
+  ```sql
+CREATE TABLE bw_blacklisted (
+    guildID TEXT,
+    minecraftUUID TEXT,
+    
+    createdTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    editedTimestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    PRIMARY KEY(guildID, minecraftUUID)
+)
+  ```
+</details>
 8. Run the bot: `npm run start`! 🎉
 
 ## Reference
