@@ -18,21 +18,20 @@ module.exports = class extends Command {
         super(...args, {
             usage: "<username>",
             description: "Links your Minecraft account to your Discord account.",
-            fullDescription: VERIFY_STEPS + "\n\n" +
-            "If the command fails, you'll see an error message (usually in bold). Read the instructions on how to" +
-                " resolve the issue before contacting a staff member.",
+            fullDescription: `${VERIFY_STEPS}\n\nIf the command fails, you'll see an error message in bold. Read the ` +
+                "instructions on how to properly verify your account before contacting a staff member.",
             cooldown: 5,
             requiredArgs: 1,
             guildOnly: true,
             clientPermissions: ["manageRoles", "manageNicknames"],
-            validatePermissions: (message) => message.guildID === Constants.GUILD_HYPIXEL_BEDWARS
-                ? true
-                : this.category.onUsageInWrongGuild(),
+            validatePermissions: (message) => message.guildID === Constants.GUILD_HYPIXEL_BEDWARS ||
+                this.category.onUsageInWrongGuild(),
         });
     }
 
     /**
      * Runs the command.
+     *
      * @param {Eris.Message} message The message the command was called on.
      * @param {Array<String>} args Arguments passed to the command.
      */
@@ -166,6 +165,7 @@ module.exports = class extends Command {
 
     /**
      * Verifies the user.
+     *
      * @param {Eris.Message} message The message to reference.
      * @param {Object} player The player data from Hypixel.
      */
@@ -261,6 +261,7 @@ module.exports = class extends Command {
 
     /**
      * Purge messages in the verification channel.
+     *
      * @param {Eris.Message} message The message to reference.
      * @return {Promise<Number>} The amount of messages that were purged.
      */
@@ -337,6 +338,7 @@ module.exports = class extends Command {
 
     /**
      * Logs when a member tries to verify but passes/fails.
+     *
      * @param {Eris.Message} message The message to reference.
      * @param {{ username: String, uuid: String }} player The Hypixel player data. May not be up-to-date with Mojang.
      * @param {String} reason The reason to be seen by moderators.
@@ -398,6 +400,7 @@ module.exports = class extends Command {
 
     /**
      * Checks what type of message the bot should send to the channel.
+     *
      * @param {Eris.Message} message The message to reference.
      * @return {"embed" | "plain"} The send type.
      */
@@ -411,6 +414,7 @@ module.exports = class extends Command {
 
     /**
      * Sends a request to Hypixel for a player's info.
+     *
      * @param {String} username The player's username.
      * @returns {Promise<Object>} The player data.
      * @private
@@ -422,6 +426,7 @@ module.exports = class extends Command {
 
     /**
      * Sends a request to Mojang for a player's most recent username.
+     *
      * @param {String} uuid The UUID of the player.
      * @returns {Promise<String>} The player's username.
      * @private
