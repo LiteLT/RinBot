@@ -16,21 +16,8 @@ module.exports = class extends Command {
     }
 
     async run(message) {
-        // Note: only 5 results!!!
+        // Only 5 results!!!
         let history = [
-            {
-                date: "May 8th, 2020",
-                value: [
-                    "Added category descriptions in the help manual (`help <category>`)."
-                ].map((str) => `- ${str}`).join("\n")
-            },
-            {
-                date: "May 11th, 2020",
-                value: [
-                    "Fixed an issue with the `Hypixel Guild` subcommand where guild members would not be fetched, " +
-                    "causing an error (credit: `HoggyTheWizard#8015`)."
-                ].map((str) => `- ${str}`).join("\n")
-            },
             {
                 date: "May 12th, 2020",
                 value: [
@@ -70,6 +57,22 @@ module.exports = class extends Command {
                     "Fixed an issue in the `hypixel/player` subcommand where it would return `Not Found` on some" +
                     " social media pages."
                 ].map((str) => `- ${str}`).join("\n")
+            },
+            {
+                date: "June 16th, 2020",
+                value: [
+                    "Resumed work on Rin for emergency.",
+                    "Created the `bwunverify` command.",
+                    "Created the `bwforcify` command."
+                ]
+            },
+            {
+                date: "June 17th, 2020",
+                value: [
+                    "Created the `bwupdate` command.",
+                    "Patched various bugs with Hypixel BedWars commands.",
+                    "Began hosting the bot on a dedicated machine."
+                ]
             }
         ];
 
