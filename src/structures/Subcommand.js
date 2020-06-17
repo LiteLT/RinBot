@@ -162,18 +162,18 @@ class Subcommand {
         }
 
         if (options.images === "remove") {
-            // eslint-disable-next-line max-len
+            //noinspection LongLine
             output = output.replace(/(img(\d{1,4}%?)?|webm)\(\bhttps?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]\)/gi, "");
         } else if (options.images === "snip") {
-            // eslint-disable-next-line max-len
+            //noinspection LongLine
             output = output.replace(/(img(\d{1,4}%?)?|webm)\(\bhttps?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]\)/gi, "<image snip>");
         }
 
         if (options.youtubeLinks === "remove") {
-            // eslint-disable-next-line max-len
+            //noinspection LongLine
             output = output.replace(/youtube\(https?:\/\/(?:www\.)?(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w_-]{11})\)/g, "");
         } else if (options.youtubeLinks === "replace") {
-            // eslint-disable-next-line max-len
+            //noinspection LongLine
             output = output.replace(/youtube\(https?:\/\/(?:www\.)?(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w_-]{11})\)/g, (_txt, match) => `[YouTube](https://youtu.be/${match})`);
         }
 
