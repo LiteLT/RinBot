@@ -21,7 +21,7 @@ module.exports = class extends Command {
     }
 
     async query(guildID, props = "*") {
-        let prefixData = await this.client.db.all(`SELECT ${props} FROM prefixes WHERE guildID = ?`, [
+        let prefixData = await this.client.db.get(`SELECT ${props} FROM prefixes WHERE guildID = ?`, [
             guildID
         ]);
 
