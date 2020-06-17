@@ -171,9 +171,10 @@ class Command {
     }
 
     /**
-     * Check if the user can run the command.
+     * Checks if the user can run the command.
+     *
      * @param {Eris.Message} message The message to reference.
-     * @returns {Promise<Boolean>} A boolean signaling the user can run the command, or an error if they
+     * @return {Promise<Boolean>} A boolean signaling the user can run the command, or an error if they
      * can't. The error has a `.friendly` property to tell if it was from missing permissions. The error message
      * is the recommended reason to supply to the user. The method may also return `null` if it's supposed to be a
      * silent rejection.
@@ -251,7 +252,7 @@ class Command {
 
             if (botPermissions.length) {
                 invalidate(`I do not have permission to perform this action.\n\nMissing Permissions: ` +
-                `\`${botPermissions.join("`, `")}\``);
+                    `\`${botPermissions.join("`, `")}\``);
 
                 return null;
             }
@@ -292,6 +293,7 @@ class Command {
 
     /**
      * Builds the help manual and sends it to the user.
+     *
      * @param {Eris.Message} message The message to reference.
      * @param {?Subcommand} subcommand The subcommand to build instead of the normal help manual.
      * @param {{ time: Number, embed: Boolean }} options The options to use when building the help manual.
@@ -300,7 +302,7 @@ class Command {
      * option has no effect in it.
      * @param {Boolean} [options.embed=true] Whether or not to send the message as a rich embed or plain text. This
      * option may be ignored when set to `true` if the bot lacks permission to `Embed Links`.
-     * @returns {Promise<Message>} The newly created message.
+     * @return {Promise<Eris.Message>} The newly created message.
      */
     async buildHelp(message, subcommand, options = { time: 300000, embed: true }) {
         let content = null;
@@ -331,28 +333,28 @@ class Command {
 
         if (sendType === "embed") {
             if (subcommand) {
-                            content = {
-                                embed: {
-                                    color: Util.base10(Constants.Colors.DEFAULT),
-                                    title: `${title} ${subcommand.name} ${subcommand.usage}`,
-                                    description: subcommand.fullDescription || subcommand.description || "No description.",
-                                    fields: []
-                                }
-                            };
-                        } else {
-                            content = {
-                                embed: {
-                                    title: `${title} ${this.usage}`,
-                                    color: Util.base10(Constants.Colors.DEFAULT),
-                                    description: this.fullDescription || this.description || "No description.",
-                                    fields: []
-                                }
-                            };
+                content = {
+                    embed: {
+                        color: Util.base10(Constants.Colors.DEFAULT),
+                        title: `${title} ${subcommand.name} ${subcommand.usage}`,
+                        description: subcommand.fullDescription || subcommand.description || "No description.",
+                        fields: []
+                    }
+                };
+            } else {
+                content = {
+                    embed: {
+                        title: `${title} ${this.usage}`,
+                        color: Util.base10(Constants.Colors.DEFAULT),
+                        description: this.fullDescription || this.description || "No description.",
+                        fields: []
+                    }
+                };
 
-                            if (this.flags.length) {
-                        content.embed.fields.push({
-                            name: "Flags",
-                            value: this.flags.map((flag) => {
+                if (this.flags.length) {
+                    content.embed.fields.push({
+                        name: "Flags",
+                        value: this.flags.map((flag) => {
                             return `${Constants.Emojis.WHITE_MEDIUM_SQUARE} \`--${flag.name}${flag.value
                                 ? `=${flag.value}`
                                 : ""}\` ${flag.description}`;
@@ -412,26 +414,26 @@ class Command {
                 },
                 Array.isArray(content) && content[2].startsWith("\n**Flags**") ||
                 content.embed && content.embed.fields.some((field) => field.name === "Flags") ? {
-                        embed: content.embed && {
-                            embed: {
-                                color: content.embed.color,
-                                title: `${content.embed.title} > Flags`,
-                                description: content.embed.fields[0].value
-                            }
-                        },
-                        plain: Array.isArray(content) && [content[0], content[2]].join("\n")
-                    } : null,
+                    embed: content.embed && {
+                        embed: {
+                            color: content.embed.color,
+                            title: `${content.embed.title} > Flags`,
+                            description: content.embed.fields[0].value
+                        }
+                    },
+                    plain: Array.isArray(content) && [content[0], content[2]].join("\n")
+                } : null,
                 Array.isArray(content) && (content[3] || content[2]).startsWith("\n**Subcommands**") ||
                 content.embed && content.embed.fields.some((field) => field.name === "Subcommands") ? {
-                        embed: content.embed && {
-                            embed: {
-                                color: content.embed.color,
-                                title: `${content.embed.title} > Subcommands`,
-                                description: (content.embed.fields[1] || content.embed.fields[0]).value
-                            }
-                        },
-                        plain: Array.isArray(content) && [content[0], content[3] || content[2]].join("\n")
-                    } : null
+                    embed: content.embed && {
+                        embed: {
+                            color: content.embed.color,
+                            title: `${content.embed.title} > Subcommands`,
+                            description: (content.embed.fields[1] || content.embed.fields[0]).value
+                        }
+                    },
+                    plain: Array.isArray(content) && [content[0], content[3] || content[2]].join("\n")
+                } : null
             ].filter((prop) => prop !== null);
 
             let msg = await message.channel.createMessage(pages[0][sendType]);
@@ -549,12 +551,13 @@ class Command {
 
     /**
      * Find a member in the guild.
+     *
      * @param {Eris.Message} message The message to reference when searching.
      * @param {Array<String>} args Arguments passed for searching separated by a space.
      * @param {Object} [options] Options to use when searching for a guild member.
      * @param {Boolean} [options.strict=false] Whether to enable strict mode, forcing the search to match the user's
      * exact name. This is redundant in constant values, like the user's ID.
-     * @returns {Member} The guild member, or null (if no guild member was found).
+     * @return {?Eris.Member} The guild member, or null (if no guild member was found).
      */
     findMember(message, args, options = { strict: false }) {
         let members = message.channel.guild.members;
@@ -585,23 +588,24 @@ class Command {
 
             if (options.strict) {
                 return Util.userTag(member).toLowerCase() === search ||
-                member.username.toLowerCase() === search;
+                    member.username.toLowerCase() === search;
             }
 
             return Util.userTag(member).toLowerCase() === search ||
-            member.username.toLowerCase() === search ||
-            member.username.toLowerCase().includes(search);
+                member.username.toLowerCase() === search ||
+                member.username.toLowerCase().includes(search);
         }) || null;
     }
 
     /**
-     * Find a role in a guild.
+     * Looks for a role in a guild.
+     *
      * @param {Eris.Message} message The message to reference.
      * @param {Array<String>} args Arguments passed for searching.
      * @param {Object} [options] The options to use for searching.
      * @param {Boolean} [options.strict=false] Whether or not to skip checking for if a role name is close enough
      * to the search input.
-     * @returns {Eris.Role} The role that was found, or `null` if no role was found.
+     * @return {?Eris.Role} The role that was found, or `null` if no role was found.
      */
     findRole(message, args, options = { strict: false }) {
         let roleID = args[0].match(/^(?:(\d+)|<@&(\d+)>)$/);
@@ -634,14 +638,16 @@ class Command {
     }
 
     /**
-     * Find a channel in the guild.
-     * @param {Message} message The message to reference.
+     * Looks for a channel in a guild.
+     *
+     * @param {Eris.Message} message The message to reference.
      * @param {Array<String>} args Arguments to pass for searching. When searching for text channels, spaces will
      * be replaced with dashes.
      * @param {Object} [options] The options to use when searching.
      * @param {Boolean} [options.strict=false] Whether or not to disallow matching names if the input is included in
      * the name.
      * @param {"any"|"text"|"voice"|"category"} [options.type="any"] The type of guild channels to allow.
+     * @return {?Eris.Channel} The channel, or `undefined`.
      */
     findChannel(message, args, options = { type: "any", strict: true }) {
         let channelID = args[0].match(/^(?:(\d+)|<#(\d+)>)$/);
@@ -696,11 +702,11 @@ class Command {
     }
 
     /**
-     * Handle any exception thrown by the command. It'll likely be handled by sending a message to
-     * the user telling what went wrong, or simply logging the error to the console/logging channel.
-     * @param {Message} message The message to reference.
+     * Handles an exception thrown by the command.
+     *
+     * @param {Eris.Message} message The message to reference.
      * @param {Error} err The error instance.
-     * @returns {any} Any value from the method.
+     * @return {void} Any value from the method.
      */
     handleException(message, err) {
         const report = async () => {
@@ -751,36 +757,44 @@ class Command {
         if (err.code) {
             let code = err.code;
 
-            // Unauthorized, forbidden.
-            if (code === 401 || code === 403) {
-                return message.channel.createMessage("I do not have permission to perform this " +
-                `action (code: ${code}).`);
+            if (code === 401 || code === 403) { // Unauthorized, forbidden.
+                message.channel.createMessage("I do not have permission to perform this " +
+                    `action (code: ${code}).`);
+
+                return;
             } else if (code >= 500 && code < 600) {
-                return message.channel.createMessage(`There seems to be an issue with the API (code: ${code}). Try ` +
-                "again?");
+                message.channel.createMessage(`There seems to be an issue with the API (code: ${code}). Try ` +
+                    "again?");
+
+                return;
             }
 
             // Discord errors, hopefully.
             if (code > 10000) {
-                if (code === 20001 || code === 20002) {
-                    // Bots/only users can use this endpoint.
-                    return report();
-                } else if (code < 10016) {
-                    // Unknown X
-                    return CommandError.ERR_NOT_FOUND(message, err.message.replace("Unknown ", ""));
+                if (code === 20001 || code === 20002) { // Bots/only users can use this endpoint.
+                    report();
+
+                    return
+                } else if (code < 10016) { // Unknown <T>
+                    CommandError.ERR_NOT_FOUND(message, err.message.replace("Unknown ", ""));
+
+                    return;
                 } else if (code >= 30001 && code <= 30016 || code === 40007) {
                     // Maximum number of X reached (Y), the user is banned from the guild.
-                    return message.channel.createMessage(err.message);
-                } else if (code === 50001 || code === 50013) {
-                    // Missing access, missing permissions
-                    return message.channel.createMessage("I do not have permission to perform " +
-                    "this action.");
-                } else if (code === 50003) {
-                    // Cannot execute action on DM.
-                    return message.channel.createMessage(`${Constants.CustomEmojis
-                        .LOCK} The \`${this.name}\` command can only be run in a server.`);
-                } else if (code === 90001) {
-                    // Reaction blocked, probably blocked the bot.
+                    message.channel.createMessage(err.message);
+
+                    return;
+                } else if (code === 50001 || code === 50013) { // Missing access, missing permissions
+                    message.channel.createMessage("I do not have permission to perform " +
+                        "this action.");
+
+                    return;
+                } else if (code === 50003) { // Cannot execute action on DM.
+                    message.channel.createMessage(`${Constants.CustomEmojis.LOCK} The \`${this
+                        .name}\` command can only be run in a server.`);
+
+                    return;
+                } else if (code === 90001) { // Reaction blocked, probably blocked the bot.
                     return;
                 }
             }
@@ -791,11 +805,14 @@ class Command {
 
     /**
      * Check the status sent by an HTTP(s) request.
-     * @param {Response} res The response sent back.
+     *
+     * @param {Response} res The response from the server.
      * @param {String} [convert=json] The type of value to convert the response to.
      * @param {Array<Number>} [statusCodes=[]] An array of valid status codes. The method checks if
      * the response was OK (code >= 200 && code <= 300), so there's no need to pass codes
      * in the 200 range.
+     * @return {*} The response body after the transformation.
+     * @throws {Error} If the status was not ok or in the allowed status codes array.
      */
     checkStatus(res, convert = "json", statusCodes = []) {
         if (res.ok || statusCodes.includes(res.status)) {
@@ -809,8 +826,9 @@ class Command {
     }
 
     /**
-     * Sanitize the permissions, returning the permissions one can use in a human readable form.
-     * @param {Array<String>} perms An array of permissions something may have.
+     * Sanitizes Eris permissions for human-readability.
+     *
+     * @param {Array<String>} perms An array of Eris permissions by their name.
      * @returns {Array<String>} An array of human-readable permissions.
      */
     sanitizePermissions(perms) {
@@ -849,6 +867,20 @@ class Command {
         };
 
         return perms.map((perm) => permissions[perm] || "???");
+    }
+
+    /**
+     * Checks what type of message the bot should send.
+     *
+     * @param {Eris.Message} message The message to reference.
+     * @return {"embed" | "plain"} The send type.
+     */
+    sendType(message) {
+        if (message.channel.permissionsOf?.(this.client.user.id).has("embedLinks")) {
+            return "embed";
+        }
+
+        return "plain";
     }
 }
 
