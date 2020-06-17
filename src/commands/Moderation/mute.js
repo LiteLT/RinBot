@@ -73,17 +73,19 @@ module.exports = class extends Command {
         let duration = (durationArg.match(/\d+[a-zA-Z]+/g) || []).reduce((prev, time) => prev + ms(time), 0);
         let reason = reasonArgs.join(" ");
         let result = this.check(message, member, memberArg, duration, durationArg, reason);
+
+        // TODO
     }
 
     async notify() {
-
+        // TODO
     }
 
     async logPunishment() {
-
+        // TODO
     }
 
     async check() {
-
+        // TODO
     }
 };
