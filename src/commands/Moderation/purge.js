@@ -5,6 +5,7 @@ const ratelimits = new Set();
 
 module.exports = class extends Command {
     constructor(...args) {
+        //noinspection JSStringConcatenationToES6Template
         super(...args, {
             usage: "<amount> (member) [...flags]",
             description: "Removes/clears messages from the channel.",
@@ -262,15 +263,14 @@ module.exports = class extends Command {
             return `**???**: ${history[userID]}`;
         }).join("\n");
 
-        return message.channel.createMessage(`${Constants.CustomEmojis
-            .CHECKMARK} Successfully purged **${purgedMessages.length}** ` +
-            `messages.\n\n${cleanHistory}`.substring(0, 2000)).then((msg) => {
-            Util.deleteMessage(msg, { time: 2500 }).catch(() => {});
-        });
+        return message.channel.createMessage(`${Constants.CustomEmojis.CHECKMARK} Successfully purged **${purgedMessages
+            .length}** messages.\n\n${cleanHistory}`.substring(0, 2000))
+            .then((msg) => Util.deleteMessage(msg, { time: 2500 }))
     }
 
     /**
      * Checks if a message passes the filter.
+     *
      * @param {Eris.Message} msg The message instance.
      * @param {Eris.Member} [member] The member to restrict messages to as a filter.
      * @param {Object} flags The flags to use when filtering. Flags can have a value signaling
@@ -412,8 +412,9 @@ module.exports = class extends Command {
 
                 case "link":
                 case "links": {
-                    // eslint-disable-next-line max-len
-                    let matches = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/i.test(msg.content);
+                    //noinspection LongLine
+                    let matches = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=+$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=+$,\w]+@)[A-Za-z0-9.-]+)((?:\/[+~%/.\w\-_]*)?\??(?:[-+=&;%@.\w_]*)#?(?:[.!/\\\w]*))?)/i
+                        .test(msg.content);
 
                     if (max.links - 1 >= 0 && matches) {
                         --max.links;
