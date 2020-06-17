@@ -1,18 +1,24 @@
 "use strict";
 
 /**
- * @typedef {import("eris").Message} Message
- */
-/**
  * Represents a CommandError class, used for sending common command fail messages.
  */
 class CommandError {
+    ///**
+    // * Sends a message saying something was not found.
+    // * @param {Message} message The message to reference.
+    // * @param {String} type The thing that was not found.
+    // * @param {String} [search=""] The input.
+    // * @returns {Promise<Message>} The created message.
+    // */
     /**
      * Sends a message saying something was not found.
-     * @param {Message} message The message to reference.
-     * @param {String} type The thing that was not found. 
-     * @param {String} [search=""] The input.
-     * @returns {Promise<Message>} The created message.
+     *
+     * @param {Eris.Message} message The message to reference.
+     * @param {string} type What was not found.
+     * @param {string} search The search input.
+     * @return {Promise<Eris.Message<Eris.PrivateChannel>>}
+     * @constructor
      */
     static ERR_NOT_FOUND(message, type, search = "") {
         if (type) {
