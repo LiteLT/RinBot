@@ -27,7 +27,7 @@ class Collection extends Map {
      * Returns an array of values returned from running a function over each item.
      * @param {Function} fn The function to run over each item. The function receives the item, index and its `this`
      * value.
-     * @returns {Array<any>} An array of each item returned from the function.
+     * @returns {Array<*>} An array of each item returned from the function.
      */
     map(fn) {
         let arr = [];
@@ -43,7 +43,7 @@ class Collection extends Map {
      * Find an item in the collection.
      * @param {Function} fn The function to try finding an item from. The function must return a truthfully value to
      * return as the value from the method. The function receives the item, index and its `this` value.
-     * @returns {any} The item receives from the function, or `undefined` if nothing was found.
+     * @returns {*} The item receives from the function, or `undefined` if nothing was found.
      */
     find(fn) {
         for (const [key, value] of this.entries()) {
@@ -81,7 +81,7 @@ class Collection extends Map {
 
     /**
      * Get a random item from the collection.
-     * @returns {any} An item from the collection.
+     * @returns {*} An item from the collection.
      */
     random() {
         return [...this.values()][Math.floor(Math.random() * this.size)];
