@@ -31,8 +31,7 @@ class Util {
         let clientMember = await this.guildMe(client, member.guild);
 
         if (member.id === member.guild.ownerID ||
-            member.id === clientMember.id ||
-            clientMember.id === member.guild.ownerID) {
+            member.id === clientMember.id) {
             return false;
         }
 
@@ -149,10 +148,10 @@ class Util {
 
     /**
      * Filters out an array by returning two arrays that pass and fail the condition function.
-     * @param {Array<any>} arr The array to use.
+     * @param {Array<*>} arr The array to use.
      * @param {Function} fn The function to run on each element in the array. The function receives the item, index and
      * value of `this`.
-     * @param {any} thisArg The `this` value to use in the function.
+     * @param {*} thisArg The `this` value to use in the function.
      * @returns {Array<Array<*>>} The result of the function. The first array contains the values
      * returning a truthfully value, while the 2nd contain the ones failing to pass.
      */
@@ -175,8 +174,8 @@ class Util {
 
     /**
      * Filters out repeating entries in an array.
-     * @param {Array<any>} arr The array to filter.
-     * @returns {Array<any>} The new array, with all the repeating items removed. Items with different instances
+     * @param {Array<*>} arr The array to filter.
+     * @returns {Array<*>} The new array, with all the repeating items removed. Items with different instances
      * (e.g. objects) will fail to be removed if they're not the exact same instance.
      */
     static arrayUnique(arr) {
