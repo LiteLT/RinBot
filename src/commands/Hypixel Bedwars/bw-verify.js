@@ -1,7 +1,8 @@
 "use strict";
 
 const { Util, Command, Constants, Endpoints } = require("../../index.js");
-const VERIFY_STEPS = [
+const fetch = require("node-fetch");
+const VERIFY_STEPS = `${[
     "Go to any lobby.",
     "Right click your player head.",
     "Click the social media menu (Twitter icon).",
@@ -9,9 +10,8 @@ const VERIFY_STEPS = [
     "Paste your Discord username when asked (e.g. `Kinolite#0001`).",
     `Head back to \`#verification\` and run \`${Constants.PRIMARY_PREFIX}bwverify <username>\` with \`username\` ` +
     "being your Minecraft username."
-].map((str, index) => `**${index + 1}.** ${str}`).join("\n") + "\n\n" +
-`Example: \`${Constants.PRIMARY_PREFIX}bwverify Kinolite\``;
-const fetch = require("node-fetch");
+].map((str, index) => `**${index + 1}.** ${str}`).join("\n")}\n\nExample: \`${Constants
+    .PRIMARY_PREFIX}bwverify Kinolite\``;
 
 module.exports = class extends Command {
     constructor(...args) {
@@ -23,6 +23,7 @@ module.exports = class extends Command {
             cooldown: 5,
             requiredArgs: 1,
             guildOnly: true,
+            aliases: ["bwverify"],
             clientPermissions: ["manageRoles", "manageNicknames"],
             validatePermissions: (message) => message.guildID === Constants.GUILD_HYPIXEL_BEDWARS ||
                 this.category.onUsageInWrongGuild(),
@@ -39,7 +40,7 @@ module.exports = class extends Command {
         username = username.replace(/^<([^>]+)>$/, (str, match) => match);
 
         let existingEntry = await this.client.db.get("SELECT minecraftUUID FROM bw_verified WHERE guildID = ? " +
-            "AND userID = ?", [message.guildID, message.author.id]) || null;
+            "AND userID = ?", [message.guildID, message.author.id]);
 
         if (existingEntry) {
             let mcUsername = await this._requestUsername(existingEntry.minecraftUUID);
@@ -179,12 +180,11 @@ module.exports = class extends Command {
         }
 
         let nickname = `[${bedwarsLevel} ${bedwarsStar}] ${player.displayname}`;
-        let roles = [bedwarsRole.id, ...message.member.roles.filter((roleID) => {
-            return !Object.values(this.category.ranks).some((rank) => rank.role === roleID) && ![
+        let roles = [bedwarsRole.id, ...message.member.roles.filter((roleID) => !Object
+            .values(this.category.ranks).some((rank) => rank.role === roleID) && ![
                 this.category.roles.needUsernames,
                 this.category.roles.needUsername
-            ].includes(roleID);
-        })];
+            ].includes(roleID))];
 
         switch (player.rank) {
             case "HELPER": {
@@ -246,94 +246,15 @@ module.exports = class extends Command {
 
         await message.member.edit({
             roles: memberRoles,
-            nick: isManageable ? nickname : null
+            nick: isManageable ? nickname : undefined
         });
 
-        await this.purgeMessages(message);
-
-        let msg = await message.channel.createMessage(`${Constants.Emojis.BLUE_CHECK} Your account has been ` +
-            `verified as **${player.displayname}**.`);
-
-        await Util.deleteMessage(msg, { time: 10000 });
+        await this.category.purgeMessages(message, message.member);
+        await message.channel.createMessage(`${Constants.Emojis
+            .BLUE_CHECK} Your account has been verified as **${player.displayname}**.`)
+            .then((msg) => Util.deleteMessage(msg, { time: 3000 }));
 
         return true;
-    }
-
-    /**
-     * Purge messages in the verification channel.
-     *
-     * @param {Eris.Message} message The message to reference.
-     * @return {Promise<Number>} The amount of messages that were purged.
-     */
-    async purgeMessages(message) {
-        let deleted = [];
-
-        let deleteCount = await message.channel.purge(100, (msg) => {
-            if (!msg.pinned && (msg.author?.id === message.author.id ||
-                msg.mentions.some((user) => user.id === message.author?.id))) {
-                deleted.push(msg);
-
-                return true;
-            }
-
-            return false;
-        });
-
-        let channel = message.channel.guild.channels.get(this.category.channels.changelogs);
-
-        if (channel) {
-            deleted = deleted.map((msg) => `__${msg.author ? Util.userTag(msg.author) : "???"}__: ${msg
-                .content || "???"}`);
-
-            let msgBuilder = "";
-            let count = 0;
-
-            for (const log of deleted) {
-                if (msgBuilder.length + log.length > Constants.Discord.MAX_EMBED_DESCRIPTION_LENGTH) {
-                    await channel.createMessage({
-                        embed: {
-                            title: "Bulk Delete",
-                            timestamp: new Date(),
-                            description: msgBuilder,
-                            color: Util.base10(Constants.Colors.ORANGE),
-                            fields: [{
-                                name: "Metadata",
-                                value: [
-                                    `**Deleted**: **${count}**`,
-                                    `**Channel**: ${message.channel.name} (${message.channel.mention})`
-                                ].join("\n")
-                            }]
-                        }
-                    });
-
-                    msgBuilder = "";
-                    count = 0;
-                } else {
-                    msgBuilder += `${log}\n`;
-                    ++count;
-                }
-            }
-
-            if (msgBuilder.length) {
-                await channel.createMessage({
-                    embed: {
-                        title: "Bulk Delete",
-                        timestamp: new Date(),
-                        description: msgBuilder,
-                        color: Util.base10(Constants.Colors.ORANGE),
-                        fields: [{
-                            name: "Metadata",
-                            value: [
-                                `**Deleted**: **${count}**`,
-                                `**Channel**: ${message.channel.name} (${message.channel.mention})`
-                            ].join("\n")
-                        }]
-                    }
-                });
-            }
-        }
-
-        return deleteCount;
     }
 
     /**
@@ -356,8 +277,8 @@ module.exports = class extends Command {
                 return channel.createMessage({
                     embed: {
                         timestamp: new Date(),
-                        color: Util.base10(Constants.Colors[passed ? "GREEN" : "YELLOW"]),
                         title: passed ? "Member Verified" : "Verification Failed",
+                        color: Util.base10(Constants.Colors[passed ? "GREEN" : "YELLOW"]),
                         description: reason,
                         fields: [
                             {
