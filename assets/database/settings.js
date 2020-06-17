@@ -2,11 +2,11 @@ module.exports = {
     prefix: {
         summary: "Modify the guild prefix(es).",
         description: "The `prefix` setting allows you to configure the guild prefix through adding, removing, " +
-        "clearing or reseting the guild prefixes.",
+        "clearing or resetting the guild prefixes.",
         maximumAmount: 10,
         length: {
             min: 0,
-            max: 20 // 20 ccharacters to allow mentions
+            max: 20 // 20 characters to allow mentions
         }
     },
     modrole: {
