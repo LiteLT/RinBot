@@ -1,4 +1,4 @@
-const { CommandCategory } = require("../index.js");
+const { Util, Constants, CommandCategory } = require("../index.js");
 
 module.exports = class extends CommandCategory {
     constructor(name) {
@@ -74,7 +74,7 @@ module.exports = class extends CommandCategory {
 
         /**
          * The channel IDs.
-         * @type {Object<String, Eris.Channel.id>}
+         * @type {Object}
          */
         this.channels = {
             verification: "422259585798242314",
@@ -202,5 +202,87 @@ module.exports = class extends CommandCategory {
                 }
             }
         }
+    }
+
+    /**
+     * Purge messages in the verification channel.
+     *
+     * @param {Eris.Message} message The message to reference.
+     * @param {Eris.Member} member The target member.
+     * @return {Promise<Number>} The amount of messages that were purged.
+     */
+    async purgeMessages(message, member) {
+        let deleted = [];
+
+        if (message.channel.id !== this.channels.verification) {
+            return false;
+        }
+
+        let deleteCount = await message.channel.purge(100, (msg) => {
+            if (!msg.pinned && (msg.author?.id === member.id ||
+                msg.mentions.some((user) => user.id === member.id))) {
+                deleted.push(msg);
+
+                return true;
+            }
+
+            return false;
+        });
+
+        let channel = message.channel.guild.channels.get(this.channels.changelogs);
+
+        if (channel) {
+            deleted = deleted.map((msg) => `__${msg.author ? Util.userTag(msg.author) : "???"}__: ${msg
+                .content || "???"}`);
+
+            let msgBuilder = "";
+            let count = 0;
+
+            for (const log of deleted) {
+                if (msgBuilder.length + log.length > Constants.Discord.MAX_EMBED_DESCRIPTION_LENGTH) {
+                    await channel.createMessage({
+                        embed: {
+                            title: "Bulk Delete",
+                            timestamp: new Date(),
+                            description: msgBuilder,
+                            color: Util.base10(Constants.Colors.ORANGE),
+                            fields: [{
+                                name: "Metadata",
+                                value: [
+                                    `**Deleted**: **${count}**`,
+                                    `**Channel**: ${message.channel.name} (${message.channel.mention})`
+                                ].join("\n")
+                            }]
+                        }
+                    });
+
+                    msgBuilder = "";
+                    count = 0;
+                } else {
+                    msgBuilder += `${log}\n`;
+                    ++count;
+                }
+            }
+
+            if (msgBuilder.length) {
+                await channel.createMessage({
+                    embed: {
+                        title: "Bulk Delete",
+                        timestamp: new Date(),
+                        description: msgBuilder,
+                        color: Util.base10(Constants.Colors.ORANGE),
+                        fields: [{
+                            name: "Metadata",
+                            value: [
+                                `**Deleted**: **${count}**`,
+                                `**Channel**: ${message.channel.name} (${message.channel.mention})`
+                            ].join("\n")
+                        }]
+                    }
+                });
+            }
+        }
+
+        return deleteCount;
     }
 };
