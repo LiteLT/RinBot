@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+//noinspection SpellCheckingInspection
 module.exports = {
     DISCORD_TOKEN: process.env.DISCORD_TOKEN,
     HYPIXEL_API_KEY: process.env.HYPIXEL_API_KEY,
