@@ -35,7 +35,7 @@ module.exports = class extends Command {
             ]
         });
     }
-    
+
     async run(message, [memberArg, timeArg, ...reasonArgs]) {
         let member = this.findMember(message, [memberArg], { strict: true });
         let time = (timeArg.match(/\d+[a-zA-Z]+/g) || [])
@@ -172,7 +172,7 @@ module.exports = class extends Command {
                     let content = `${Constants.Emojis.ZIPPER_MOUTH} You have been muted in ` +
                     `**${message.channel.guild.name}** for **${ms(time, { long: true })}**` +
                     (flags.showmod ? ` by **${Util.userTag(message.author)}**${reason}` : "") +
-                    (reason !== "" ? ` with the following reason:\n>>> ${reason}` : "");
+                    (reason === "" ? "" : ` with the following reason:\n>>> ${reason}`);
 
                     return dm.createMessage(content);
                 }).catch(() => message.channel.createMessage(`${Constants.Emojis
@@ -183,8 +183,6 @@ module.exports = class extends Command {
                 .userTag(member)}** has been warned.`);
         } else if (typeof status === "string") {
             return message.channel.createMessage(status);
-        } else if (status === null) {
-            return;
         }
     }
 
@@ -210,7 +208,7 @@ module.exports = class extends Command {
         const MIN_MUTE_LENGTH = 10000;
 
         if (!member) {
-            CommandError.ERR_NOT_FOUND(message, "guild member", memberArg);
+            await CommandError.ERR_NOT_FOUND(message, "guild member", memberArg);
 
             return null;
         }
