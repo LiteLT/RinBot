@@ -1,6 +1,7 @@
 "use strict";
 
 const { Util, Command, Constants, Endpoints, CommandError } = require("../../index.js");
+const fetch = require("node-fetch");
 const { Member } = require("eris");
 
 module.exports = class extends Command {
