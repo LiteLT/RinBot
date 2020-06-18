@@ -1,6 +1,6 @@
 {
     "name": "rinbot",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A private Discord bot.",
     "main": "app.js",
     "author": "Kinolite",
