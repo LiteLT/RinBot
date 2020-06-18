@@ -36,7 +36,7 @@ module.exports = class extends Command {
             return CommandError.ERR_NOT_FOUND(message, "guild member", args.join(" "));
         }
 
-        let forced = member !== message.member;
+        let forced = args.length && member !== message.member;
         let existingEntry = await this.client.db.get("SELECT minecraftUUID FROM bw_verified WHERE guildID = ? " +
             "AND userID = ?", [message.guildID, member.id]);
 
