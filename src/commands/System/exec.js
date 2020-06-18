@@ -23,7 +23,7 @@ module.exports = class extends Command {
             return message.channel.createMessage("Go away.");
         }
 
-        exec(args.join(" "), { shell: "/bin/zsh", timeout: 60000 }).then(({ stdout, stderr }) => {
+        exec(args.join(" "), { timeout: 60000 }).then(({ stdout, stderr }) => {
             const makeCodeblock = (code) => `\`\`\`sh\n${code}\`\`\``;
             let output = [];
 
