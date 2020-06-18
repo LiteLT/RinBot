@@ -1,6 +1,6 @@
 "use strict";
 
-const { Util, Command, Constants, Endpoints } = require("../../index.js");
+const { Util, Command, Constants, Endpoints, CommandError } = require("../../index.js");
 const fetch = require("node-fetch");
 
 module.exports = class extends Command {
