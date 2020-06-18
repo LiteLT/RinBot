@@ -26,7 +26,7 @@ module.exports = class extends Command {
             aliases: ["bwverify"],
             clientPermissions: ["manageRoles", "manageNicknames"],
             validatePermissions: (message) => message.guildID === Constants.GUILD_HYPIXEL_BEDWARS ||
-                this.category.onUsageInWrongGuild(),
+                this.category.onUsageInWrongGuild()
         });
     }
 
@@ -51,10 +51,10 @@ module.exports = class extends Command {
             }, "This member's account is already verified.", false);
 
             return Util.reply(message, "**your account is already verified.**\n\n" +
-            `Your Discord account is currently verified under the Minecraft account, \`${mcUsername}\`.\n` + [
-                `If you'd like to verify under this player, run \`${message.prefix}bwupdate\`.`,
-                "If you'd like to verify under a different Minecraft or Discord account, contact a staff member.",
-            ].map((str) => `   - ${str}`).join("\n"));
+                `Your Discord account is currently verified under the Minecraft account, \`${mcUsername}\`.\n` + [
+                    `If you'd like to verify under this player, run \`${message.prefix}bwupdate\`.`,
+                    "If you'd like to verify under a different Minecraft or Discord account, contact a staff member."
+                ].map((str) => `   - ${str}`).join("\n"));
         }
 
         if (!/^\w{1,16}$/.test(username)) {
@@ -94,7 +94,7 @@ module.exports = class extends Command {
             }, "This Minecraft player is blacklisted from joining.", false);
 
             return Util.reply(message, "**this account is blacklisted.**\n\n" +
-            `You're not allowed to verify under the player, \`${player.displayname}\`.`);
+                `You're not allowed to verify under the player, \`${player.displayname}\`.`);
         }
 
         existingEntry = await this.client.db.get("SELECT userID, minecraftUUID FROM bw_verified WHERE guildID = ?" +
@@ -105,15 +105,15 @@ module.exports = class extends Command {
                 uuid: player.uuid,
                 username: player.displayname
             }, "This member tried verifying under a Minecraft account that's already verified (linked " +
-            `user ID: \`${existingEntry.userID}\`).`, false);
+                `user ID: \`${existingEntry.userID}\`).`, false);
 
             let target = this.findMember(message, [existingEntry.userID], { strict: true }) ||
                 await this.client.getRESTUser(existingEntry.userID).catch(() => null);
 
             return Util.reply(message, "**this Minecraft account is already registered.**\n\n" +
-            `The Minecraft account (${player.displayname}) you entered is linked to another Discord user (${target
-                ? Util.userTag(target)
-                : `(user ID: \`${existingEntry.userID}\`)`})\n\n` +
+                `The Minecraft account (${player.displayname}) you entered is linked to another Discord user (${target
+                    ? Util.userTag(target)
+                    : `(user ID: \`${existingEntry.userID}\`)`})\n\n` +
                 "If you own the account and wish to verify under it on this account, contact a staff member.");
         }
 
@@ -131,7 +131,7 @@ module.exports = class extends Command {
                 `account, follow the following steps:\n\n${VERIFY_STEPS}\n\n` +
                 "If you see a message like, \"The URL isn't valid!\", check if you typed it correctly or if you have" +
                 ` special characters in your Discord username. If so, link your Discord tag as \`${shortID}\` in ` +
-                "chat when prompted.")
+                "chat when prompted.");
         }
 
         if (discordTag !== Util.userTag(message.author) && discordTag !== shortID) {
@@ -179,9 +179,9 @@ module.exports = class extends Command {
         let nickname = `[${bedwarsLevel} ${bedwarsStar}] ${player.displayname}`;
         let roles = [bedwarsRole.id, ...message.member.roles.filter((roleID) => !Object
             .values(this.category.ranks).some((rank) => rank.role === roleID) && ![
-                this.category.roles.needUsernames,
-                this.category.roles.needUsername
-            ].includes(roleID))];
+            this.category.roles.needUsernames,
+            this.category.roles.needUsername
+        ].includes(roleID))];
 
         switch (player.rank) {
             case "HELPER": {
@@ -300,12 +300,12 @@ module.exports = class extends Command {
                 });
             } else if (sendType === "plain") {
                 let content = `${Constants.Emojis[passed ? "INPUT_TRAY" : "X_EMOJI"]} **${Util.userTag(message
-                    .author)}** (${message.author.mention}) ${passed
+                        .author)}** (${message.author.mention}) ${passed
                     ? `has been verified by **${Util.userTag(this.client.user)}** (${this.client.user.id}).`
                     : `failed to verify their account for the following reason: ${reason}`}\n\nMinecraft Account: ` +
-                (player.uuid
-                    ? `**${player.username}** (<${Endpoints.PLANCKE_PLAYER(player.uuid)}>)`
-                    : `??? (input: \`${player.username}\`)`);
+                    (player.uuid
+                        ? `**${player.username}** (<${Endpoints.PLANCKE_PLAYER(player.uuid)}>)`
+                        : `??? (input: \`${player.username}\`)`);
 
                 return channel.createMessage(content);
             }

@@ -54,7 +54,7 @@ module.exports = class extends Command {
         if (!existingEntry) {
             await this.logUpdate(message, target, {}, "This user is not verified.");
 
-            return Util.reply(message, `**${Util.userTag(target)}** is not verified.`)
+            return Util.reply(message, `**${Util.userTag(target)}** is not verified.`);
         }
 
         await this.client.db.run("DELETE FROM bw_verified WHERE guildID = ? AND userID = ?", [
@@ -67,7 +67,7 @@ module.exports = class extends Command {
                 nick: "",
                 reason: "Member un-verified.",
                 roles: [this.category.roles.needUsernames]
-            })
+            });
         }
 
         let username = await this._fetchMcUsername(existingEntry.minecraftUUID);

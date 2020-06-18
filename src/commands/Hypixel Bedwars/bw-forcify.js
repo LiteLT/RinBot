@@ -53,7 +53,7 @@ module.exports = class extends Command {
         }
 
         if (!/^\w{1,16}$/.test(username)) {
-            this._logUpdate(message, member, {username}, "The username is not valid.", false);
+            this._logUpdate(message, member, { username }, "The username is not valid.", false);
 
             return Util.reply(message, "the username you entered is malformed. A Minecraft username can only contain" +
                 " letters and numbers.");
@@ -62,19 +62,19 @@ module.exports = class extends Command {
         let player = await this._fetchHypixelPlayer(username).catch((err) => err);
 
         if (player instanceof Error) {
-            this._logUpdate(message, member, {username}, "Hypixel API error.", false);
+            this._logUpdate(message, member, { username }, "Hypixel API error.", false);
 
             return Util.reply(message, "there seems to be an issue with the Hypixel API. Try again?");
         }
 
         if (player == null) {
-            this._logUpdate(message, member, {username}, "The player could not be found on Hypixel.", false);
+            this._logUpdate(message, member, { username }, "The player could not be found on Hypixel.", false);
 
             return Util.reply(message, "the username you entered could not be found on Hypixel. Make sure the" +
                 " spelling is correct or check the name history for recent changes.");
         }
 
-        let playerMetadata = {username, uuid: player.uuid};
+        let playerMetadata = { username, uuid: player.uuid };
         existingEntry = (await this.client.db.get("SELECT COUNT(*) FROM bw_blacklisted WHERE guildID = ? AND" +
             " minecraftUUID = ?", [message.guildID, player.uuid]))["COUNT(*)"];
 
@@ -133,9 +133,9 @@ module.exports = class extends Command {
         let nickname = `[${bedwarsLevel} ${bedwarsStar}] ${player.displayname}`;
         let roles = [bedwarsRole.id, ...member.roles.filter((roleID) => !Object
             .values(this.category.ranks).some((rank) => rank.role === roleID) && ![
-                this.category.roles.needUsernames,
-                this.category.roles.needUsername
-            ].includes(roleID))];
+            this.category.roles.needUsernames,
+            this.category.roles.needUsername
+        ].includes(roleID))];
 
         switch (player.rank) {
             case "HELPER": {
