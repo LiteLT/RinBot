@@ -24,7 +24,7 @@ module.exports = class extends Command {
         await message.channel.createMessage("Updating...");
 
         try {
-            await exec("git pull --no-commit origin master && pm2 restart rin");
+            await exec("sudo git pull --no-commit origin master && pm2 restart rin");
             await this.client.gracefulExit(0); // Just to be safe.
         } catch (ex) {
             return message.channel.createMessage(`Failed to download update: ${ex.stack || ex}`);
