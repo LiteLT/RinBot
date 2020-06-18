@@ -48,43 +48,42 @@ module.exports = class extends Command {
             await this.logVerify(message, {
                 username: mcUsername,
                 uuid: existingEntry.minecraftUUID
-            }, "This member's Discord account is already verified.", false);
+            }, "This member's account is already verified.", false);
 
-            return Util.reply(message, "**Your Discord Account is Already Verified.**\n\n" +
+            return Util.reply(message, "**your account is already verified.**\n\n" +
             `Your Discord account is currently verified under the Minecraft account, \`${mcUsername}\`.\n` + [
-                `If you'd like to verify under this Minecraft account, do \`${message.prefix}bwupdate\`.`,
-                "If you'd like to verify under a different Minecraft or Discord, contact a staff member.",
+                `If you'd like to verify under this player, run \`${message.prefix}bwupdate\`.`,
+                "If you'd like to verify under a different Minecraft or Discord account, contact a staff member.",
             ].map((str) => `   - ${str}`).join("\n"));
         }
 
         if (!/^\w{1,16}$/.test(username)) {
-            await this.logVerify(message, { username }, "The username is not a valid Minecraft " +
-                "username.", false);
+            await this.logVerify(message, { username }, "The username is malformed.", false);
 
-            return Util.reply(message, "**Invalid Username**\n\n" +
-                "The Minecraft username you entered is not a valid Minecraft username. A valid username can only" +
-                " contain letters A-Z and numbers 0-9.");
+            return Util.reply(message, "**invalid username.**\n\n" +
+                "The username you entered is not a valid Minecraft username. A valid username can only contain" +
+                " letters and numbers up to 16 characters long.");
         }
 
         let player = await this._requestHypixelPlayerData(username);
 
         if (player.player === null) {
-            await this.logVerify(message, { username }, "The username could not be found on " +
-                "Hypixel.", false);
+            await this.logVerify(message, { username }, "The player could not be found on Hypixel.", false);
 
-            return Util.reply(message, "**Username Not Found.**\n\n" +
+            return Util.reply(message, "**player not found.**\n\n" +
                 "The username you entered could not be found on Hypixel.\n" + [
-                    "Make sure the username you typed in is correct. Usernames are **not** case-sensitive.",
-                    "Try logging into the server. If you can't connect, try signing out and signing back into" +
-                    " Minecraft through the Minecraft launcher.",
-                    "Make sure the username you entered is your Minecraft username (not your Discord username)."
+                    "Make sure you typed your username correctly (the casing does not matter).",
+                    "Try joining Hypixel before running this command again. If you can't connect (e.g., \"failed to" +
+                    " authenticate\"), try signing out of Minecraft from the launcher, signing back in, and" +
+                    " rejoin Hypixel.",
+
+                    "Make sure you typed your Minecraft username and not your Discord username/tag."
                 ].map((str) => `   - ${str}`).join("\n")) + "\n\n" +
                 "If you continue having issues with this error message and you've tried all three options, contact a" +
                 " staff member.";
         }
 
         player = player.player;
-
         existingEntry = await this.client.db.get("SELECT minecraftUUID FROM bw_blacklisted WHERE guildID = ? AND" +
             " minecraftUUID = ?", [message.guildID, player.uuid]);
 
@@ -92,10 +91,10 @@ module.exports = class extends Command {
             await this.logVerify(message, {
                 uuid: player.uuid,
                 username: player.displayname
-            }, "The Minecraft account this member used is **blacklisted**.", false);
+            }, "This Minecraft player is blacklisted from joining.", false);
 
-            return Util.reply(message, "**This Minecraft Account is Blacklisted.**\n\n" +
-            `You're not allowed to verify under the account \`${player.displayname}\`.`);
+            return Util.reply(message, "**this account is blacklisted.**\n\n" +
+            `You're not allowed to verify under the player, \`${player.displayname}\`.`);
         }
 
         existingEntry = await this.client.db.get("SELECT userID, minecraftUUID FROM bw_verified WHERE guildID = ?" +
@@ -105,49 +104,47 @@ module.exports = class extends Command {
             await this.logVerify(message, {
                 uuid: player.uuid,
                 username: player.displayname
-            }, "This member attempted to verify under a Minecraft account that's already verified (linked " +
+            }, "This member tried verifying under a Minecraft account that's already verified (linked " +
             `user ID: \`${existingEntry.userID}\`).`, false);
 
             let target = this.findMember(message, [existingEntry.userID], { strict: true }) ||
                 await this.client.getRESTUser(existingEntry.userID).catch(() => null);
 
-            return Util.reply(message, "**This Minecraft Account is Already Registered.**\n\n" +
-            `The Minecraft account (${player.displayname}) you entered is linked to another Discord account (${target
+            return Util.reply(message, "**this Minecraft account is already registered.**\n\n" +
+            `The Minecraft account (${player.displayname}) you entered is linked to another Discord user (${target
                 ? Util.userTag(target)
-                : `??? (user ID: \`${existingEntry.userID}\`)`})\n\n` +
-                "If you want to link the Minecraft account to this current Discord account, contact a staff member.");
+                : `(user ID: \`${existingEntry.userID}\`)`})\n\n` +
+                "If you own the account and wish to verify under it on this account, contact a staff member.");
         }
 
-        let discordTag = player.socialMedia?.links?.DISCORD?.trim() ?? null;
+        let discordTag = player.socialMedia?.links?.DISCORD?.trim() || null;
+        let shortID = `${message.author.id.slice(-6)}#${message.author.discriminator}`;
 
         if (discordTag === null) {
             await this.logVerify(message, {
                 uuid: player.uuid,
                 username: player.displayname
-            }, "The Minecraft account has not been linked to any Discord account on Hypixel.", false);
+            }, "The player's account has not linked a Discord tag to their account.", false);
 
-            return Util.reply(message, "**This Minecraft Account has not Linked a Discord Account.\n\n**" +
-                `The Minecraft account (${player.displayname}) you entered was found, but has not been linked to any ` +
-                `Discord account on Hypixel. To link your account, follow the following steps:\n\n${VERIFY_STEPS}\n\n` +
-            "If you see a message like, \"The URL isn't valid!\" in chat, make sure you typed your Discord username" +
-                ` and tag (\`${Util.userTag(message.author)}\`) correctly. If the message persists, you likely have` +
-                ` a special character in your username. Instead of your Discord tag, type \`${message.author.id
-                    .slice(-6)}#${message.author.discriminator}\` in chat when prompted and re-run the command.`);
+            return Util.reply(message, "**this player has not linked a Discord tag.**\n\n" +
+                `This player (\`${player.displayname}\`) has not linked a Discord account on Hypixel. To link your ` +
+                `account, follow the following steps:\n\n${VERIFY_STEPS}\n\n` +
+                "If you see a message like, \"The URL isn't valid!\", check if you typed it correctly or if you have" +
+                ` special characters in your Discord username. If so, link your Discord tag as \`${shortID}\` in ` +
+                "chat when prompted.")
         }
 
-        if (discordTag !== Util.userTag(message.author) &&
-            discordTag !== `${message.author.id.slice(-6)}#${message.author.discriminator}`) {
+        if (discordTag !== Util.userTag(message.author) && discordTag !== shortID) {
             await this.logVerify(message, {
                 uuid: player.uuid,
                 username: player.displayname
             }, `The Discord tag linked on Hypixel (\`${discordTag}\`) does not match the member's Discord ` +
                 "tag.", false);
 
-            return Util.reply(message, "**The Discord Tag on Hypixel Does Not Match With Your Current Tag.**\n\n" +
-            `The Discord tag (\`${discordTag}\`) on does not match with your current Discord tag (\`${Util
-                .userTag(message.author)}\`) or short ID (\`${message.author.id.slice(-6)}#${message.author
-                .discriminator}\`) on __Hypixel__. Run \`${message.prefix}help ${this.name}\` for steps on how to ` +
-                "update your tag.");
+            return Util.reply(message, "**this player's Discord tag does not match your current tag.**\n\n" +
+                `The Discord tag (\`${discordTag}\`) on Hypixel does not match your current tag (\`${Util
+                    .userTag(message.author)}\`), or short ID form (\`${shortID}\`). If you don't know how to ` +
+                `verify, run \`${message.prefix}help ${this.name}\` for steps on how to update your tag.`);
         }
 
         if (!player.achievements?.bedwars_level) {
@@ -156,9 +153,9 @@ module.exports = class extends Command {
                 username: player.displayname
             }, "The Minecraft account has never played a game of BedWars.");
 
-            return Util.reply(message, "**Your Minecraft Account Has Never Played a Game of BedWars**\n\n" +
-            "In order to fetch your game stats, it's required you play at least **1** game of BedWars. Play a game" +
-                " then run this command again.");
+            return Util.reply(message, "**you've never played a game of BedWars.**\n\n" +
+                "In order to verify your account, it's required you've played at least 1 game of Hypixel BedWars." +
+                "Once you've done so, run this command again.");
         }
 
         return this.verify(message, player);
