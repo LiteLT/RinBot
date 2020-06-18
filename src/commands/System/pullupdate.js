@@ -1,7 +1,7 @@
 "use strict";
 
 const { Command } = require("../../index.js");
-const { execCommand } = require("child_process");
+const { exec: execCommand } = require("child_process");
 const { promisify } = require("util");
 const exec = promisify(execCommand);
 
