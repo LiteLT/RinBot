@@ -80,38 +80,38 @@ module.exports = class extends EventListener {
     }
 
     async loadSettings(message) {
-        //let prefixData = await this.client.db.get("SELECT prefixes FROM prefixes WHERE guildID = ?", [
-        //    message.guildID
-        //]) || null;
-        //
-        //if (prefixData) {
-        //    prefixData.prefixes = prefixData.prefixes.split(",").map((str) => str.replace(/%2C/g, ","));
-        //
-        //    if (prefixData.prefixes[0] === "") {
-        //        prefixData.prefixes = [];
-        //    }
-        //}
-        //
-        //let modroles = (await this.client.db.get("SELECT roles FROM modroles WHERE guildID = ?", [
-        //    message.guildID
-        //]) ?? { roles: "" }).roles.split(",").filter((roleID) => message.channel.guild.roles.has(roleID))
-        //    .filter((role) => role);
-        //
-        //let guildOptions = (await this.client.db.get("SELECT * FROM guildOptions WHERE guildID = ?", [
-        //    message.guildID
-        //]) ?? {
-        //    modlogs: null
-        //});
-        //
-        //this.client.guildSettings.set(message.guildID, {
-        //    prefixes: prefixData?.prefixes || null,
-        //    categories: { disabled: [] },
-        //    commands: { disabled: [] },
-        //    subcommands: { disabled: [] },
-        //    moderation: {
-        //        roles: modroles,
-        //        channel: guildOptions.modlogs
-        //    }
-        //});
+//         let prefixData = await this.client.db.get("SELECT prefixes FROM prefixes WHERE guildID = ?", [
+//             message.guildID
+//         ]) || null;
+
+//         if (prefixData) {
+//             prefixData.prefixes = prefixData.prefixes.split(",").map((str) => str.replace(/%2C/g, ","));
+
+//             if (prefixData.prefixes[0] === "") {
+//                 prefixData.prefixes = [];
+//             }
+//         }
+
+//         let modroles = (await this.client.db.get("SELECT roles FROM modroles WHERE guildID = ?", [
+//             message.guildID
+//         ]) ?? { roles: "" }).roles.split(",").filter((roleID) => message.channel.guild.roles.has(roleID))
+//             .filter((role) => role);
+
+//         let guildOptions = (await this.client.db.get("SELECT * FROM guildOptions WHERE guildID = ?", [
+//             message.guildID
+//         ]) ?? {
+//             modlogs: null
+//         });
+
+//         this.client.guildSettings.set(message.guildID, {
+//             prefixes: prefixData?.prefixes || null,
+//             categories: { disabled: [] },
+//             commands: { disabled: [] },
+//             subcommands: { disabled: [] },
+//             moderation: {
+//                 roles: modroles,
+//                 channel: guildOptions.modlogs
+//             }
+//         });
     }
 };
