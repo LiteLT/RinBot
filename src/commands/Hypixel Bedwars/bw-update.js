@@ -58,6 +58,19 @@ module.exports = class extends Command {
             return Util.reply(message, "there seems to be an issue with the Hypixel API. Try again?");
         }
 
+        if (!player.achievements?.bedwars_level) { // I'm going to assume the staff member was in vanish.
+            await this.logVerify(message, {
+                uuid: player.uuid,
+                username: player.displayname
+            }, "The Minecraft account has never played a game of BedWars.");
+
+            return Util.reply(message, forced
+                ? `It seems **${Util.userTag(member)}** has never played a game of BedWars. Are they possibly a ` +
+                "staff member in vanish?"
+                : "It seems you've never played a game of BedWars. Try playing one game then run this command again" +
+                " (are you in vanish?)");
+        }
+
         return this._update(message, member, player, forced);
     }
 
