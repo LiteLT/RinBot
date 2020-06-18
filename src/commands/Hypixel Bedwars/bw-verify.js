@@ -7,11 +7,11 @@ const VERIFY_STEPS = `${[
     "Right click your player head.",
     "Click the social media menu (Twitter icon).",
     "Click the Discord icon.",
-    "Paste your Discord username when asked (e.g. `Kinolite#0001`).",
+    "Paste your Discord tag when asked (e.g. `Lite#0001`).",
     `Head back to \`#verification\` and run \`${Constants.PRIMARY_PREFIX}bwverify <username>\` with \`username\` ` +
     "being your Minecraft username."
 ].map((str, index) => `**${index + 1}.** ${str}`).join("\n")}\n\nExample: \`${Constants
-    .PRIMARY_PREFIX}bwverify Kinolite\``;
+    .PRIMARY_PREFIX}bwverify Shrekster\``;
 
 module.exports = class extends Command {
     constructor(...args) {
