@@ -70,10 +70,10 @@ module.exports = class extends Command {
         this.client.globalRatelimit.clear();
 
         this.client.init(["events", "connect"]).then(() => {
+            let failedSuffix = failed.length ? `\n\nFailed: \`\`${failed.join("`, `")}` : "";
+
             return message.channel.createMessage(`${Constants.CustomEmojis
-                .CHECKMARK} Reloaded all commands.${failed.length
-                ? `\n\nFailed commands: \`${failed.join("`, `")}\``
-                : ""}`);
+                .CHECKMARK} Reloaded all commands.${failedSuffix}`);
         });
     }
 

@@ -173,12 +173,11 @@ module.exports = class extends Subcommand {
                 media.isLocked ? Constants.Emojis.LOCK : null
             ].filter((prop) => prop !== null).join(" ")
         };
-        let rankedScore = media.rankings.find((rank) => {
-            return rank.type === "RATED" && (rank.allTime || rank.year || rank.season);
-        });
-        let rankedPopularity = media.rankings.find((rank) => {
-            return rank.type === "POPULAR" && (rank.allTime || rank.year || rank.season);
-        });
+        let rankedScore = media.rankings
+            .find((rank) => rank.type === "RATED" && (rank.allTime || rank.year || rank.season));
+
+        let rankedPopularity = media.rankings
+            .find((rank) => rank.type === "POPULAR" && (rank.allTime || rank.year || rank.season));
 
         let invisibleSpace = "​ ";
         let bulletChar = "»";
@@ -469,10 +468,9 @@ module.exports = class extends Subcommand {
                     ...embedTemplate,
                     url: `${embedTemplate.url}/watch`,
                     title: `${embedTemplate.title} > Watch`,
-                    description: Util.arrayJoinLimit(media.streamingEpisodes.map((episode) => {
-                        return `${bulletChar} [${episode.title
-                            .replace(/[\[\]]/g, (str) => `\\${str}`)}](${episode.url})`;
-                    }), "\n", Constants.Discord.MAX_EMBED_DESCRIPTION_LENGTH)
+                    description: Util.arrayJoinLimit(media.streamingEpisodes.map((episode) => `${bulletChar} [${episode
+                        .title.replace(/[\[\]]/g, (str) => `\\${str}`)}](${episode.url})`), "\n", Constants.Discord
+                        .MAX_EMBED_DESCRIPTION_LENGTH)
                 } : null,
                 media.characters.edges.length ? {
                     ...embedTemplate,
@@ -483,10 +481,8 @@ module.exports = class extends Subcommand {
                             name: Util.toTitleCase(role),
                             value: Util.arrayJoinLimit(media.characters.edges
                                 .filter((edge) => edge.role === role)
-                                .map(({ node: character }) => {
-                                    return `[${this.personName(character.name)}](${character
-                                        .siteUrl})`;
-                                }), ` ${emdash} `, Constants.Discord.MAX_EMBED_FIELD_VALUE_LENGTH)
+                                .map(({ node: character }) => `[${this.personName(character.name)}](${character
+                                    .siteUrl})`), ` ${emdash} `, Constants.Discord.MAX_EMBED_FIELD_VALUE_LENGTH)
                         }))
                 } : null,
                 media.staff.edges.length ? {
@@ -494,10 +490,8 @@ module.exports = class extends Subcommand {
                     url: `${embedTemplate.url}/staff`,
                     title: `${embedTemplate.title} > Staff`,
                     description: Util.arrayJoinLimit(media.staff.edges
-                        .map(({ node: staff, role }) => {
-                            return `${bulletChar} [${this.personName(staff.name)}](${staff
-                                .siteUrl}) ${emdash} ${role}`;
-                        }), "\n", Constants.Discord.MAX_EMBED_DESCRIPTION_LENGTH)
+                        .map(({ node: staff, role }) => `${bulletChar} [${this.personName(staff.name)}](${staff
+                            .siteUrl}) ${emdash} ${role}`), "\n", Constants.Discord.MAX_EMBED_DESCRIPTION_LENGTH)
                 } : null,
                 media.reviews.nodes.length ? {
                     ...embedTemplate,
@@ -533,9 +527,8 @@ module.exports = class extends Subcommand {
                 } : null
             ].filter((page) => page !== null);
 
-            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => {
-                return userID === message.author.id && emojis.includes(emoji.name);
-            }, {
+            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => userID === message.author.id &&
+                emojis.includes(emoji.name), {
                 time: 300000,
                 messageID: msg.id,
                 allowedTypes: ["ADD"],
@@ -651,17 +644,14 @@ module.exports = class extends Subcommand {
                     color: Util.base10(Constants.Colors.ANILIST),
                     title: prefix + `"${search.substring(0, Constants.Discord.MAX_EMBED_TITLE_LENGTH - prefix
                         .length - 2)}"`,
-                    description: media.map((media, index) => {
-                        return `**${index + 1}.** [${this.mediaTitle(media.title)
-                            .replace(/[\[\]]/g, (str) => `\\${str}`)}](${media.siteUrl})`;
-                    }).join("\n"),
+                    description: media.map((media, index) => `**${index + 1}.** [${this.mediaTitle(media.title)
+                        .replace(/[\[\]]/g, (str) => `\\${str}`)}](${media.siteUrl})`).join("\n"),
                     footer: { text: `Select a number between 1 and ${media.length}.` }
                 }
             }
             : `__**${prefix}"${search.substring(0, Constants.Discord.MAX_EMBED_TITLE - prefix
-                .length - 2)}"**__\n` + media.map((media, index) => {
-                return `**${index + 1}.** ${this.mediaTitle(media.title)} (<${media.siteUrl}>)`;
-            }).join("\n") + `\n\nSelect a number between 1 and ${media.length}.`;
+                .length - 2)}"**__\n` + media.map((media, index) => `**${index + 1}.** ${this.mediaTitle(media
+                .title)} (<${media.siteUrl}>)`).join("\n") + `\n\nSelect a number between 1 and ${media.length}.`;
 
         let msg = await Util.messagePrompt(message, message.channel, this
             .client, content, 30000, [...Array(media.length + 1).keys()].slice(1))

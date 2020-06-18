@@ -17,28 +17,26 @@ module.exports = class extends Command {
             validatePermissions: (message) => Constants.BOT_DEVELOPERS.includes(message.author.id)
         });
     }
-  
+
     async run(message, args) {
         if (args.join(" ").includes("rm -rf /")) {
             return message.channel.createMessage("Go away.");
         }
-      
+
         exec(args.join(" "), { shell: "/bin/zsh", timeout: 60000 }).then(({ stdout, stderr }) => {
             const makeCodeblock = (code) => `\`\`\`sh\n${code}\`\`\``;
             let output = [];
-          
-          
+
+
             if (stdout) {
                 output.push(`**Standard Output**\n${makeCodeblock(stdout)}`);
             }
-          
+
             if (stderr) {
                 output.push(`**Standard Error**\n${makeCodeblock(stderr)}`);
             }
-          
+
             return message.channel.createMessage(output.join("\n").substring(0, 2000));
-        }).catch((err) => {
-            return message.channel.createMessage(`\`\`\`js\n${err.message}\`\`\``);
-        });
+        }).catch((err) => message.channel.createMessage(`\`\`\`js\n${err.message}\`\`\``));
     }
 };

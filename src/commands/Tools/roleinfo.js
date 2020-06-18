@@ -38,10 +38,7 @@ module.exports = class extends Command {
                     }
 
                     return 0;
-                }).find((role) => {
-                    return role.name.toLowerCase() === search ||
-                    role.name.toLowerCase().includes(search);
-                });
+                }).find((role) => role.name.toLowerCase() === search || role.name.toLowerCase().includes(search));
 
         if (role) {
             return this.result(message, role);

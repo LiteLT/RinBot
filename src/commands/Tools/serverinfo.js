@@ -281,16 +281,16 @@ module.exports = class extends Command {
                                 : null
                         },
                         fields: [
-                            presenceCount !== null ? {
+                            presenceCount === null ? null : {
                                 name: "Online",
                                 value: `**${Util.commaify(presenceCount)}** members.`,
                                 inline: true
-                            } : null,
-                            memberCount !== null ? {
+                            },
+                            memberCount === null ? null : {
                                 name: "Member Count",
                                 value: `**${Util.commaify(memberCount)}** members.`,
                                 inline: true
-                            } : null
+                            }
                         ].filter((field) => field !== null)
                     }
                 });

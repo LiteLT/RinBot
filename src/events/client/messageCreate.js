@@ -94,9 +94,8 @@ module.exports = class extends EventListener {
 
         let modroles = (await this.client.db.get("SELECT roles FROM modroles WHERE guildID = ?", [
             message.guildID
-        ]) ?? { roles: "" }).roles.split(",").filter((roleID) => {
-            return message.channel.guild.roles.has(roleID);
-        }).filter((role) => role);
+        ]) ?? { roles: "" }).roles.split(",").filter((roleID) => message.channel.guild.roles.has(roleID))
+            .filter((role) => role);
 
         let guildOptions = (await this.client.db.get("SELECT * FROM guildOptions WHERE guildID = ?", [
             message.guildID

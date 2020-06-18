@@ -11,7 +11,7 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, [prefix]) {
         prefix = prefix.toLowerCase();
         let prefixes = (await this.client.commands.get("prefix").query(message.guildID, "prefixes"))?.prefixes ?? [];
@@ -49,8 +49,8 @@ module.exports = class extends Subcommand {
             message.guildID
         ]);
 
-        return message.channel.createMessage(`The \`${prefix}\` prefix has been removed. ${!prefixes.length
-            ? `You need to mention me to set a new one (\`@${Util.userTag(this.client.user)} prefix\`).`
-            : ""}`);
+        return message.channel.createMessage(`The \`${prefix}\` prefix has been removed. ${(prefixes.length
+            ? ""
+            : `You need to mention me to set a new one (\`@${Util.userTag(this.client.user)} prefix\`).`)}`);
     }
 };

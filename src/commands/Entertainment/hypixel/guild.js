@@ -357,12 +357,9 @@ module.exports = class extends Subcommand {
                                         };
 
                                         return Util.arrayJoinLimit(Object.keys(guild.exp_by_game)
-                                            .map((gameDBName) => {
-                                                return `${gameNames[gameDBName]}: **${this
-                                                    .abbreviateNumber(guild
-                                                        .exp_by_game[gameDBName])}**`;
-                                            }), "\n", Constants.Discord
-                                            .MAX_EMBED_FIELD_VALUE_LENGTH);
+                                            .map((gameDBName) => `${gameNames[gameDBName]}: **${this
+                                                .abbreviateNumber(guild.exp_by_game[gameDBName])}**`), "\n", Constants
+                                            .Discord.MAX_EMBED_FIELD_VALUE_LENGTH);
                                     })()
                                 } : null
                             ].filter((field) => field !== null)
@@ -379,9 +376,8 @@ module.exports = class extends Subcommand {
                             : "")
                 })
             ].filter((page) => page !== null);
-            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => {
-                return userID === message.author.id && emojis.includes(emoji.name);
-            }, {
+            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => userID === message.author.id &&
+                emojis.includes(emoji.name), {
                 time: 300000,
                 messageID: msg.id,
                 allowedTypes: ["ADD"],
@@ -493,8 +489,7 @@ module.exports = class extends Subcommand {
             let shortValue = "";
 
             for (let precision = 2; precision >= 1; precision--) {
-                shortValue = parseFloat((suffixNum !== 0 ? num / 1000 ** suffixNum : num)
-                    .toPrecision(precision));
+                shortValue = parseFloat((suffixNum === 0 ? num : num / 1000 ** suffixNum).toPrecision(precision));
                 let dotLessShortValue = (shortValue + "").replace(/[^a-z0-9]+/gi, "");
 
                 if (dotLessShortValue.length <= 2) {

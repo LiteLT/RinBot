@@ -216,11 +216,8 @@ module.exports = class extends Subcommand {
                                     let socialMediaURL = socialMedia[mediaName];
 
                                     return `[${mediaTitles[mediaName] || "?"}](${socialMediaURL})`;
-                                }).sort((a, b) => {
-                                    return b.startsWith(Constants.CustomEmojis.DISCORD_LOGO)
-                                        ? 1
-                                        : -1;
-                                }).join(" | ")}**`
+                                }).sort((a, b) => b.startsWith(Constants.CustomEmojis.DISCORD_LOGO) ? 1 : -1)
+                                    .join(" | ")}**`
                                 : "None"
                         }
                     ]

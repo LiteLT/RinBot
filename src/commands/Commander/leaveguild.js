@@ -19,9 +19,8 @@ module.exports = class extends Command {
      * @param {Array<String>} args Arguments passed to the command.
      */
     async run(message, args) {
-        let [guilds, notFoundIDs] = Util.arrayPartition(args.map((guildID) => {
-            return this.client.guilds.get(guildID) || guildID;
-        }), (guildOrID) => typeof guildOrID !== "string");
+        let [guilds, notFoundIDs] = Util.arrayPartition(args.map((guildID) => this.client.guilds.get(guildID) ||
+            guildID), (guildOrID) => typeof guildOrID !== "string");
 
         if (guilds.every((guild) => !guild)) {
             return CommandError.ERR_NOT_FOUND(message, "guilds with the ID(s)", args

@@ -10,12 +10,11 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
         let baseCommand = this.client.commands.get("modrole");
-        let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */).map((arg) => {
-            return baseCommand.findRole(message, [arg], { strict: true }) || arg;
-        }), (role) => typeof role !== "string");
+        let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */).map((arg) => baseCommand
+            .findRole(message, [arg], { strict: true }) || arg), (role) => typeof role !== "string");
 
         if (notFoundRoles.length) {
             return CommandError.ERR_NOT_FOUND(message, "roles", notFoundRoles.join("\", \""));

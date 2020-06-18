@@ -21,9 +21,8 @@ module.exports = class extends Command {
     }
 
     async run(message, args) {
-        let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */).map((arg) => {
-            return this.findRole(message, [arg], { strict: true }) || arg;
-        }), (role) => typeof role !== "string");
+        let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */)
+            .map((arg) => this.findRole(message, [arg], { strict: true }) || arg), (role) => typeof role !== "string");
 
         if (notFoundRoles.length) {
             return CommandError.ERR_NOT_FOUND(message, "roles", notFoundRoles.join("\", \""));

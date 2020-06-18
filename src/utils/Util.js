@@ -224,12 +224,12 @@ class Util {
         let prefix = null;
         let guildPrefixes = bot.guildSettings.get(message.guildID)?.prefixes || null;
 
-        if (guildPrefixes !== null) {
+        if (guildPrefixes === null) {
+            prefix = Constants.BOT_PREFIXES.find((pre) => message.content.toLowerCase().startsWith(pre));
+        } else {
             if (guildPrefixes?.length) {
                 prefix = guildPrefixes.find((pre) => message.content.toLowerCase().startsWith(pre));
             }
-        } else {
-            prefix = Constants.BOT_PREFIXES.find((pre) => message.content.toLowerCase().startsWith(pre));
         }
 
         return prefix && message.content.substring(prefix.length).charAt(0) !== " " ? prefix : null;

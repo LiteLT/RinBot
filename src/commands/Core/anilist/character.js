@@ -161,20 +161,16 @@ module.exports = class extends Subcommand {
                             name: Util.toTitleCase(type),
                             value: Util.arrayJoinLimit(character.media.edges
                                 .filter((edge) => edge.node.type === type)
-                                .map(({ node: media, voiceActors: [staff] }) => {
-                                    return `${bulletChar} [${this.mediaTitle(media.title)}](${media
-                                        .siteUrl})${staff
-                                        ? ` ${emdash} [${this.personName(staff.name)}](${staff
-                                            .siteUrl})`
-                                        : ""}`;
-                                }), "\n", Constants.Discord.MAX_EMBED_FIELD_VALUE_LENGTH)
+                                .map(({ node: media, voiceActors: [staff] }) => `${bulletChar} [${this.mediaTitle(media
+                                    .title)}](${media.siteUrl})${staff 
+                                    ? ` ${emdash} [${this.personName(staff.name)}](${staff.siteUrl})`
+                                    : ""}`), "\n", Constants.Discord.MAX_EMBED_FIELD_VALUE_LENGTH)
                         }))
                 } : null
             ].filter((field) => field !== null);
 
-            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => {
-                return userID === message.author.id && emojis.includes(emoji.name);
-            }, {
+            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => userID === message.author.id &&
+                emojis.includes(emoji.name), {
                 time: 300000,
                 messageID: msg.id,
                 allowedTypes: ["ADD"],
@@ -291,19 +287,16 @@ module.exports = class extends Subcommand {
                     color: Util.base10(Constants.Colors.ANILIST),
                     title: prefix + `"${search.substring(0, Constants.Discord
                         .MAX_EMBED_TITLE_LENGTH - prefix.length - 2)}"`,
-                    description: characters.map((char, index) => {
-                        return `**${index + 1}.** [${this.personName(char.name)
-                            .replace(/[\[\]]/g, (str) => `\\${str}`)}](${char.siteUrl})`;
-                    }).join("\n"),
+                    description: characters.map((char, index) => `**${index + 1}.** [${this.personName(char.name)
+                        .replace(/[\[\]]/g, (str) => `\\${str}`)}](${char.siteUrl})`).join("\n"),
                     footer: {
                         text: `Select a number between 1 and ${characters.length}.`
                     }
                 }
             }
             : `__**${prefix}"${search.substring(0, Constants.Discord.MAX_EMBED_TITLE - prefix
-                .length - 2)}"**__\n` + characters.map((char, index) => {
-                return `**${index + 1}.** ${this.personName(char.name)} (<${char.siteUrl}>)`;
-            }).join("\n") + `\n\nSelect a number between 1 and ${characters.length}.`;
+                .length - 2)}"**__\n` + characters.map((char, index) => `**${index + 1}.** ${this.personName(char
+                .name)} (<${char.siteUrl}>)`).join("\n") + `\n\nSelect a number between 1 and ${characters.length}.`;
 
         let msg = await Util.messagePrompt(message, message.channel, this
             .client, content, 30000, [...Array(characters.length + 1).keys()].slice(1))

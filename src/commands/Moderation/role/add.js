@@ -20,9 +20,10 @@ module.exports = class extends Subcommand {
             return CommandError.ERR_NOT_FOUND(message, "member", memberArg);
         }
 
-        let [roles, notFoundRoles] = Util.arrayPartition(roleArgs.join(" ").split(/, */).map((arg) => {
-            return this.command.findRole(message, [arg], { strict: true }) || arg;
-        }), (role) => typeof role !== "string");
+        let [roles, notFoundRoles] = Util.arrayPartition(roleArgs.join(" ").split(/, */)
+            .map((arg) => this.command.findRole(message, [arg], {
+                strict: true
+            }) || arg), (role) => typeof role !== "string");
 
         if (roles.length) {
             let clientMember = await Util.guildMe(this.client, message.channel.guild);

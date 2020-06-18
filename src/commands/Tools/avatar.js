@@ -67,16 +67,12 @@ module.exports = class extends Command {
                     timestamp: new Date(),
                     color: Util.base10(Constants.Colors.DEFAULT),
                     description: [
-                        `[png](${user.dynamicAvatarURL("png", this.client.options
-                            .defaultImageSize)})`,
-                        `[jpg](${user.dynamicAvatarURL("jpg", this.client.options
-                            .defaultImageSize)})`,
-                        user.avatarURL !== user.staticAvatarURL
-                            ? `[gif](${user.dynamicAvatarURL("gif", this.client.options
-                                .defaultImageSize)})`
-                            : null,
-                        `[webp](${user.dynamicAvatarURL("webp", this.client.options
-                            .defaultImageSize)})`
+                        `[png](${user.dynamicAvatarURL("png", this.client.options.defaultImageSize)})`,
+                        `[jpg](${user.dynamicAvatarURL("jpg", this.client.options.defaultImageSize)})`,
+                        user.avatarURL === user.staticAvatarURL
+                            ? null
+                            : `[gif](${user.dynamicAvatarURL("gif", this.client.options.defaultImageSize)})`,
+                        `[webp](${user.dynamicAvatarURL("webp", this.client.options.defaultImageSize)})`
                     ].filter((imageType) => imageType !== null).join(" | "),
                     image: { url: user.avatarURL },
                     author: { name: Util.userTag(user) },
@@ -84,13 +80,12 @@ module.exports = class extends Command {
                 }
             });
         } else if (sendType === "attach") {
-            let ext = user.avatarURL !== user.staticAvatarURL ? "gif" : this.client
-                .options.defaultImageFormat;
+            let ext = user.avatarURL === user.staticAvatarURL ? this.client.options.defaultImageFormat : "gif";
 
             return message.channel.createMessage(`${Constants.Emojis.FRAME_PHOTO} **${Util
                 .userTag(user)}'s avatar**`, {
-                file: await fetch(user.avatarURL).then((res) => res.buffer()),
-                name: `avatar.${ext}`
+                name: `avatar.${ext}`,
+                file: await fetch(user.avatarURL).then((res) => res.buffer())
             });
         } else if (sendType === "plain") {
             return message.channel.createMessage(`${Constants.Emojis.FRAME_PHOTO} **${Util

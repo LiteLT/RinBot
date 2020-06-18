@@ -26,9 +26,8 @@ module.exports = class extends Command {
         ]) || null;
 
         if (modroleData) {
-            modroleData.roles = modroleData.roles.split(",").filter((roleID) => {
-                return message.channel.guild.roles.has(roleID);
-            }).filter((role) => role);
+            modroleData.roles = modroleData.roles.split(",").filter((roleID) => message.channel.guild.roles.has(roleID))
+                .filter((role) => role);
         }
 
         return modroleData;

@@ -12,7 +12,7 @@ module.exports = class extends Subcommand {
             requiredArgs: 1
         });
     }
-  
+
     async run(message, args) {
         let baseCommand = this.client.commands.get("logging");
         let channel = baseCommand.findChannel(message, args, { type: "text" });
@@ -24,17 +24,17 @@ module.exports = class extends Subcommand {
                 return message.channel.createMessage("The server's modlogs channel is already set to that.");
             }
 
-            if (!modlogsChannel) {
+            if (modlogsChannel) {
+                await this.client.db.run("UPDATE guildOptions SET modlogs = ? WHERE guildID = ?", [
+                    channel.id,
+                    message.guildID
+                ]);
+            } else {
                 await this.client.db.run("INSERT INTO guildOptions (guildID, modlogs) VALUES (?, ?)", [
                     message.guildID,
                     channel.id
                 ]);
 
-            } else {
-                await this.client.db.run("UPDATE guildOptions SET modlogs = ? WHERE guildID = ?", [
-                    channel.id,
-                    message.guildID
-                ]);
             }
 
             baseCommand.updateSettings(message.guildID, "modlogs", channel.id, "moderation");

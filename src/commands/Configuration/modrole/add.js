@@ -15,9 +15,10 @@ module.exports = class extends Subcommand {
     }
 
     async run(message, args) {
-        let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */).map((arg) => {
-            return this.command.findRole(message, [arg], { strict: true }) || arg;
-        }), (role) => typeof role !== "string");
+        let [roles, notFoundRoles] = Util.arrayPartition(args.join(" ").split(/, */)
+            .map((arg) => this.command.findRole(message, [arg], {
+                strict: true
+            }) || arg), (role) => typeof role !== "string");
 
         if (notFoundRoles.length) {
             return message.channel.createMessage(`Could not find the following roles: "${notFoundRoles

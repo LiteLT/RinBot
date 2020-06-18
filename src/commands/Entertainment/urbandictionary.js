@@ -31,11 +31,9 @@ module.exports = class extends Command {
 
         const output = (term, sendType, pageNumber) => {
             let ratio = term.thumbs_up / term.thumbs_down;
-            const urbanDefinition = (def) => def.replace(/\[([^\]]+)]/g, (_str, word) => {
-                return sendType === "embed"
-                    ? `[${word}](${baseURL + encodeURIComponent(word)})`
-                    : word;
-            });
+            const urbanDefinition = (def) => def.replace(/\[([^\]]+)]/g, (_str, word) => sendType === "embed"
+                ? `[${word}](${baseURL + encodeURIComponent(word)})`
+                : word);
 
             if (sendType === "embed") {
                 return {
@@ -108,9 +106,8 @@ module.exports = class extends Command {
 
             let pageNumber = 1;
             let isAwaitingResponse = false;
-            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => {
-                return userID === message.author.id && emojis.includes(emoji.name);
-            }, {
+            let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => userID === message.author.id &&
+                emojis.includes(emoji.name), {
                 time: 300000,
                 messageID: msg.id,
                 allowedTypes: ["ADD"],

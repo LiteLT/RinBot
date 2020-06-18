@@ -205,9 +205,7 @@ class Command {
             if (time) {
                 if (!this.ratelimitNoticed.has(message.author.id)) {
                     this.ratelimitNoticed.add(message.author.id);
-                    setTimeout(() => {
-                        return this.ratelimitNoticed.delete(message.author.id);
-                    }, this.cooldown * 1000);
+                    setTimeout(() => this.ratelimitNoticed.delete(message.author.id), this.cooldown * 1000);
 
                     invalidate(`You are being rate limited. Try again in **${((time - Date.now()) / 1000)
                         .toFixed(1)}** seconds.`);
@@ -354,20 +352,16 @@ class Command {
                 if (this.flags.length) {
                     content.embed.fields.push({
                         name: "Flags",
-                        value: this.flags.map((flag) => {
-                            return `${Constants.Emojis.WHITE_MEDIUM_SQUARE} \`--${flag.name}${flag.value
-                                ? `=${flag.value}`
-                                : ""}\` ${flag.description}`;
-                        }).join("\n")
+                        value: this.flags.map((flag) => `${Constants.Emojis.WHITE_MEDIUM_SQUARE} \`--${flag.name}${flag
+                            .value ? `=${flag.value}` : ""}\` ${flag.description}`).join("\n")
                     });
                 }
 
                 if (this.subcommands.size) {
                     content.embed.fields.push({
                         name: "Subcommands",
-                        value: this.subcommands.map((subcommand) => {
-                            return `**${message.prefix}${this.name} ${subcommand.name}** — ${subcommand.description}`;
-                        }).join("\n")
+                        value: this.subcommands.map((subcommand) => `**${message.prefix}${this.name} ${subcommand
+                            .name}** — ${subcommand.description}`).join("\n")
                     });
                 }
             }
@@ -381,16 +375,14 @@ class Command {
                     `**${title} ${this.usage}**`,
                     this.fullDescription || this.description || "No description.",
                     this.flags.length
-                        ? `\n__**Flags**__\n${this.flags.map((flag) => {
-                            return `${Constants.Emojis.WHITE_MEDIUM_SQUARE} \`--${flag.name}${flag.value
-                                ? `=${flag.value}`
-                                : ""}\` ${flag.description}`;
-                        }).join("\n")}`
+                        ? `\n__**Flags**__\n${this.flags.map((flag) => `${Constants.Emojis
+                            .WHITE_MEDIUM_SQUARE} \`--${flag.name}${flag.value 
+                            ? `=${flag.value}`
+                            : ""}\` ${flag.description}`).join("\n")}`
                         : null,
                     this.subcommands.size
-                        ? `\n__**Subcommands**__\n${this.subcommands.map((subcommand) => {
-                            return `**${message.prefix}${this.name} ${subcommand.name}** — ${subcommand.description}`;
-                        }).join("\n")}`
+                        ? `\n__**Subcommands**__\n${this.subcommands.map((subcommand) => `**${message.prefix}${this
+                            .name} ${subcommand.name}** — ${subcommand.description}`).join("\n")}`
                         : null
                 ].filter((prop) => prop !== null);
             }
@@ -464,9 +456,8 @@ class Command {
                 }
 
                 let pageNumber = 1;
-                let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => {
-                    return userID === message.author.id && emojis.includes(emoji.name);
-                }, {
+                let collector = new ReactionCollector(this.client, (_msg, emoji, userID) => userID === message.author
+                    .id && emojis.includes(emoji.name), {
                     time: 300000,
                     messageID: msg.id,
                     allowedTypes: ["ADD"],

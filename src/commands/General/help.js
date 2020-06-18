@@ -137,12 +137,10 @@ module.exports = class extends Command {
 
         if (flags.noembed || !hasEmbeds) {
             let content = `__**Help Manual**__\n${description.join("\n")}\n\n` +
-            Object.keys(commands).map((category) => {
-                return commands[category].length
-                    ? `**${category} — ${commands[category].length}**:\n\`${commands[category]
-                        .map((command) => command.name).join("`, `")}\``
-                    : null;
-            }).filter((prop) => prop !== null).join("\n\n");
+            Object.keys(commands).map((category) => commands[category].length
+                ? `**${category} — ${commands[category].length}**:\n\`${commands[category]
+                    .map((command) => command.name).join("`, `")}\``
+                : null).filter((prop) => prop !== null).join("\n\n");
 
             return message.channel.createMessage(content);
         }
@@ -155,12 +153,10 @@ module.exports = class extends Command {
                     icon_url: this.client.user.avatarURL,
                     name: `${this.client.user.username} Help Manual`
                 },
-                fields: Object.keys(commands).map((category) => {
-                    return commands[category].length ? {
-                        name: `${category} — ${commands[category].length}`,
-                        value: commands[category].map((command) => `\`${command.name}\``).join(", ")
-                    } : null;
-                }).filter((prop) => prop !== null)
+                fields: Object.keys(commands).map((category) => commands[category].length ? {
+                    name: `${category} — ${commands[category].length}`,
+                    value: commands[category].map((command) => `\`${command.name}\``).join(", ")
+                } : null).filter((prop) => prop !== null)
             }
         });
     }
@@ -173,10 +169,8 @@ module.exports = class extends Command {
 
         if (flags.noembed || !hasEmbeds) {
             let content = `__**${command.category.name} Category**__\n${command.category.description}\n\n${category
-                .map((command) => {
-                    return `**${prefix + command.name}** — ${command.description} ${!command
-                        .enabled ? "(disabled)" : ""}`;
-                }).join("\n")}`;
+                .map((command) => `**${prefix + command.name}** — ${command.description} ${(command
+                    .enabled ? "" : "(disabled)")}`).join("\n")}`;
 
             return message.channel.createMessage(content);
         }
@@ -188,10 +182,8 @@ module.exports = class extends Command {
                 color: Util.base10(Constants.Colors.DEFAULT),
                 fields: [{
                     name: "Commands",
-                    value: category.map((command) => {
-                        return `**${prefix + command.name}** — ${command.description} ${!command
-                            .enabled ? "(disabled)" : ""}`;
-                    }).join("\n")
+                    value: category.map((command) => `**${prefix + command.name}** — ${command.description} ${(command
+                        .enabled ? "" : "(disabled)")}`).join("\n")
                 }]
             }
         });
