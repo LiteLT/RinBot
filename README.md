@@ -191,5 +191,5 @@ CREATE TABLE bw_blacklisted (
 
 ## Reference
 - Developer(s): `Kinolite#0001 (345539839393005579)`
-- Library: [Eris v0.12.0](https://www.npmjs.com/package/eris)
+- Library: [Eris v0.13.2](https://www.npmjs.com/package/eris)
 - Last Update: May 6th, 2020.
