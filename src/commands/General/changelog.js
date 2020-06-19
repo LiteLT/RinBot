@@ -64,7 +64,7 @@ module.exports = class extends Command {
                     "Resumed work on Rin for emergency.",
                     "Created the `bwunverify` command.",
                     "Created the `bwforcify` command."
-                ]
+                ].map((str) => `- ${str}`).join("\n")
             },
             {
                 date: "June 17th, 2020",
@@ -72,7 +72,7 @@ module.exports = class extends Command {
                     "Created the `bwupdate` command.",
                     "Patched various bugs with Hypixel BedWars commands.",
                     "Began hosting the bot on a dedicated machine."
-                ]
+                ].map((str) => `- ${str}`).join("\n")
             }
         ];
 
