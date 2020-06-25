@@ -40,7 +40,7 @@ module.exports = class extends CommandCategory {
             },
             crystal: {
                 star: "✫",
-                role: "428317393236787200"
+                role: "439863000988647425"
             },
             opal: {
                 star: "✰",
