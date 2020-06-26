@@ -39,7 +39,7 @@ module.exports = class extends Command {
 
         if (!target) {
             if (Util.isSnowflake(args[0])) {
-                target = this.client.getRESTUser(args[0]).catch((err) => err);
+                target = await this.client.getRESTUser(args[0]).catch((err) => err);
             }
 
             if (!target || target instanceof Error) {

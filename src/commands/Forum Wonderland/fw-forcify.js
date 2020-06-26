@@ -6,7 +6,7 @@ module.exports = class extends Command {
     constructor(...args) {
         super(...args, {
             usage: "<member> <profile>",
-            description: "Verifies",
+            description: "Marks an account as verified.",
             fullDescription: "To use this command, you must be a staff member in the **Forum Wonderland** server." +
                 " This command will only add the `Member` role to the target member. You (the staff member) are" +
                 " responsible for applying the corresponding roles to the member's Hypixel forums profile and" +
