@@ -11,7 +11,7 @@ const VERIFY_STEPS = `${[
     `Head back to \`#verification\` and run \`${Constants.PRIMARY_PREFIX}bwverify <username>\` with \`username\` ` +
     "being your Minecraft username."
 ].map((str, index) => `**${index + 1}.** ${str}`).join("\n")}\n\nExample: \`${Constants
-    .PRIMARY_PREFIX}bwverify Doblox\``;
+    .PRIMARY_PREFIX}bwverify LiteLT\``;
 
 module.exports = class extends Command {
     constructor(...args) {
