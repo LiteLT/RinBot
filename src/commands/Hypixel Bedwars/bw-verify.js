@@ -11,7 +11,7 @@ const VERIFY_STEPS = `${[
     `Head back to \`#verification\` and run \`${Constants.PRIMARY_PREFIX}bwverify <username>\` with \`username\` ` +
     "being your Minecraft username."
 ].map((str, index) => `**${index + 1}.** ${str}`).join("\n")}\n\nExample: \`${Constants
-    .PRIMARY_PREFIX}bwverify Shrekster\``;
+    .PRIMARY_PREFIX}bwverify Doblox\``;
 
 module.exports = class extends Command {
     constructor(...args) {
@@ -19,7 +19,8 @@ module.exports = class extends Command {
             usage: "<username>",
             description: "Links your Minecraft account to your Discord account.",
             fullDescription: `${VERIFY_STEPS}\n\nIf the command fails, you'll see an error message in bold. Read the ` +
-                "instructions on how to properly verify your account before contacting a staff member.",
+                "instructions on how to properly verify your account before contacting a staff member. If you still " +
+                "have difficulty, try watching this video: https://youtu.be/uN702veuKHw",
             cooldown: 5,
             requiredArgs: 1,
             guildOnly: true,
