@@ -8,7 +8,7 @@ module.exports = class extends EventListener {
      * @param {Eris.Message} message The created message.
      */
     async run(message) {
-        if (message.author.bot || message.channel.id === "398621245685497856") {
+        if (message.author.bot || ["398621245685497856", "409380015852093440", "429314047754633216", "535911989508177920"].includes(message.channel.id)) {
             return;
         }
 
