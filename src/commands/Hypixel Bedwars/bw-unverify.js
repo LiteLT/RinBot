@@ -16,7 +16,7 @@ module.exports = class extends Command {
             clientPermissions: ["manageRoles", "manageNicknames"],
             validatePermissions: (msg) => {
                 if (msg.guildID === Constants.GUILD_HYPIXEL_BEDWARS) {
-                    return msg.member.roles.includes(this.category.roles.rankGiver);
+                    return msg.member.roles.includes(this.category.roles.discordStaff);
                 }
 
                 return this.category.onUsageInWrongGuild();

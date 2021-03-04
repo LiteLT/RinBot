@@ -28,7 +28,7 @@ module.exports = class extends Command {
      * @param {Array<String>} args Arguments passed to the command.
      */
     async run(message, args) {
-        let member = args.length && message.member.roles.includes(this.category.roles.rankGiver)
+        let member = args.length && message.member.roles.includes(this.category.roles.discordStaff)
             ? this.findMember(message, args, { strict: true })
             : message.member;
 

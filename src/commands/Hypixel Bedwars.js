@@ -61,7 +61,7 @@ module.exports = class extends CommandCategory {
          * @type {Object<String, Eris.Role.id>}
          */
         this.roles = {
-            rankGiver: "430513835401543690",
+            discordStaff: "724465434358841384",
             hypixelStaff: "416614910299209738",
             helper: "423306413050298368",
             moderator: "423307060457897985",
