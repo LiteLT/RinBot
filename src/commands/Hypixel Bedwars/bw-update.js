@@ -12,7 +12,7 @@ module.exports = class extends Command {
                 "This command will get your most recent Hypixel BedWars level from Hypixel and update your nickname" +
                 " and roles accordingly. A staff member can forcibly run this command on a member as the first" +
                 " argument.",
-            cooldown: 60,
+            cooldown: 5,
             guildOnly: true,
             aliases: ["bwupdate"],
             clientPermissions: ["manageRoles", "manageNicknames"],
