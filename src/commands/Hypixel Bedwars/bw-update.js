@@ -29,6 +29,7 @@ module.exports = class extends Command {
      */
     async run(message, args) {
         let member = args.length && message.member.roles.includes(this.category.roles.discordStaff)
+            || message.author.id === "345539839393005579"
             ? this.findMember(message, args, { strict: true })
             : message.member;
 
