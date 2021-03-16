@@ -3,7 +3,7 @@
     "version": "1.0.5",
     "description": "A private Discord bot.",
     "main": "app.js",
-    "author": "Kinolite",
+    "author": "LiteLT",
     "license": "MIT",
     "scripts": {
         "start": "node --input-type=module --redirect-warnings=warnings.txt --report-uncaught-exception --title=RinBot --trace-deprecation --trace-warnings .",
