@@ -52,7 +52,7 @@ module.exports = class extends Command {
                 existingEntry = await this.client.db.get("SELECT forumID FROM fw_verified WHERE guildID = ? AND" +
                     " userID = ?", [message.guildID, member.id]);
 
-                await member.edit({ roles: Util.arrayUnique([...member.roles, this.category.roles.member]) });
+                await member.edit({ roles: Util.arrayUnique([...member.roles ?? [], this.category.roles.member]) });
 
                 if (existingEntry) {
                     return message.channel.createMessage(`${Constants.CustomEmojis.CHECKMARK} **${Util
