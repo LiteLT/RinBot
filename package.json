@@ -10,7 +10,7 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
-        "url": "https://github.com/LiteKE/RinBot"
+        "url": "https://github.com/LiteLT/RinBot"
     },
     "dependencies": {
         "chalk": "^3.0.0",
